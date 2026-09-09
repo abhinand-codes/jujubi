@@ -19,5 +19,5 @@ Open `index.html` in a browser. No local server is needed.
 3. Under **Build and deployment**, choose **Deploy from a branch**, then select `main` and the `/ (root)` folder.
 4. Save. GitHub will display the public URL after deployment.
 
-Before sending the link, remember to replace `YOUR_EMAIL@example.com` in `script.js`.
+The reply address is already set in `script.js`; update it there if you ever want to use a different one.
 
