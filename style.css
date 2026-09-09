@@ -521,6 +521,7 @@ h2 span { font-size: .6em; vertical-align: middle; }
   margin-top: .5rem;
 }
 
+/* Verified Yes-button heartbeat and hover-pop scale integration */
 .yes-button {
   position: relative;
   overflow: hidden;
