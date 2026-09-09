@@ -456,7 +456,12 @@ sendBtn.addEventListener("click", () => {
                          EMAILJS_TEMPLATE_ID.includes("PASTE_");
 
   if (isUnconfigured) {
-    console.warn("EmailJS isn't fully configured yet — showing closing screen.");
+    console.warn("EmailJS keys are placeholders — triggering mailto: fallback to abhinandthirteen@gmail.com");
+    const subject = encodeURIComponent("JuJuBi said yes! 💛");
+    const body = encodeURIComponent(`JuJuBi confirmed our date! 💛\n\nDate: ${DATE_DISPLAY}\nLocation: ${location}\nHer note: ${note || "(no note added — see you there! 💛)"}`);
+    setTimeout(() => {
+      window.location.href = `mailto:${YOUR_EMAIL}?subject=${subject}&body=${body}`;
+    }, 400);
     showClosing();
     return;
   }
