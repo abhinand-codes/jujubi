@@ -400,27 +400,68 @@ h2 span { font-size: .6em; vertical-align: middle; }
 
 /* ── Chibi SVG character ── */
 .chibi-svg {
-  width: 9rem;
+  width: 9.5rem;
   height: auto;
-  filter: drop-shadow(0 8px 18px rgba(115,64,73,.18));
-  animation: chibiBob 3s ease-in-out infinite;
+  filter: drop-shadow(0 10px 22px rgba(249, 132, 147, 0.28));
+  animation: chibiFloat 3.2s ease-in-out infinite;
   cursor: default;
 }
-@keyframes chibiBob {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  50%      { transform: translateY(-7px) rotate(-2deg); }
+@keyframes chibiFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(-2deg); }
 }
 
-/* Cute periodic blink on the normal (idle) eyes */
-.chibi-svg .el-normal :nth-child(1),
-.chibi-svg .el-normal :nth-child(4) {
+/* Ear Twitching Animation */
+.chibi-svg .ear-left {
+  transform-box: fill-box;
+  transform-origin: bottom right;
+  animation: earTwitchLeft 4.5s ease-in-out infinite;
+}
+.chibi-svg .ear-right {
+  transform-box: fill-box;
+  transform-origin: bottom left;
+  animation: earTwitchRight 4.5s ease-in-out infinite;
+}
+@keyframes earTwitchLeft {
+  0%, 82%, 100% { transform: rotate(0deg); }
+  85%           { transform: rotate(-8deg); }
+  88%           { transform: rotate(2deg); }
+  91%           { transform: rotate(-5deg); }
+}
+@keyframes earTwitchRight {
+  0%, 82%, 100% { transform: rotate(0deg); }
+  85%           { transform: rotate(8deg); }
+  88%           { transform: rotate(-2deg); }
+  91%           { transform: rotate(5deg); }
+}
+
+/* Cute Eye Blink */
+.chibi-svg .chibi-eye {
   transform-box: fill-box;
   transform-origin: center;
-  animation: chibiBlink 3.8s ease-in-out infinite;
+  animation: chibiEyeBlink 3.6s ease-in-out infinite;
 }
-@keyframes chibiBlink {
+@keyframes chibiEyeBlink {
   0%, 88%, 100% { transform: scaleY(1); }
-  93%           { transform: scaleY(0.08); }
+  92%           { transform: scaleY(0.08); }
+}
+
+/* Pulsing Blush */
+.chibi-svg .blush-cheek {
+  animation: blushPulse 2.8s ease-in-out infinite;
+}
+@keyframes blushPulse {
+  0%, 100% { opacity: .48; transform: scale(1); }
+  50%      { opacity: .72; transform: scale(1.06); }
+}
+
+/* Sparkle stars around mascot */
+.sparkle-star { animation: starRotate 2.5s linear infinite; }
+.sparkle-star.s2 { animation-delay: .8s; }
+.sparkle-star.s3 { animation-delay: 1.6s; }
+@keyframes starRotate {
+  0%, 100% { opacity: .3; transform: scale(.8); }
+  50%      { opacity: 1;  transform: scale(1.2) rotate(15deg); }
 }
 
 /* Emotion layers: all hidden, active one shown via class on the SVG root */
