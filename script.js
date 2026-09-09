@@ -3,12 +3,30 @@
 // ════════════════════════════════════════════════════════════════
 
 // ──────────────────────────────────────────────────────────────
-// EDIT: Set your email address and confirm the date/location.
+// EDIT: Set your email + EmailJS credentials, confirm date/location.
+//
+// This site is static (GitHub Pages), so it has no backend of its
+// own — EmailJS (free, client-side) is what actually delivers her
+// note straight to your inbox when she presses Send. Setup:
+//   1. Create a free account at https://www.emailjs.com
+//   2. Add an Email Service (connect your Gmail) → copy its Service ID
+//   3. Create an Email Template with variables {{to_email}},
+//      {{date}}, {{location}}, {{note}} → copy its Template ID
+//      (set the template's "To email" field to {{to_email}})
+//   4. Account → General → copy your Public Key
+//   5. Paste all three below.
 // ──────────────────────────────────────────────────────────────
-const YOUR_EMAIL    = "YOUR_EMAIL@example.com"; // ← reply-to address
-const DATE_DISPLAY  = "September 14, 2026";     // ← shown in email body
-const DATE_LOCATION = "Dharamshala";            // ← venue
+const YOUR_EMAIL         = "abhinandthirteen@gmail.com"; // ← where her note is delivered
+const DATE_DISPLAY       = "September 14, 2026";          // ← shown in the email
+const DATE_LOCATION      = "Dharamshala";                  // ← venue
+const EMAILJS_PUBLIC_KEY  = "YOUR_EMAILJS_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID  = "YOUR_EMAILJS_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
 // ──────────────────────────────────────────────────────────────
+
+if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
+  window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+}
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $  = (s) => document.querySelector(s);
@@ -106,34 +124,34 @@ const bubbleEl   = $("#no-message");
 const bubbleText = bubbleEl?.querySelector(".bubble-text");
 const chibi      = $("#chibi-svg");
 
-// 20 escalating emotional lines with emojis
+// 20 escalating, cute (not panicky) pleading lines
 const noLines = [
-  "wait... 🥺",
-  "nooo not that button!! 😭",
-  "please please please 🙏",
-  "my heart is literally breaking 💔",
-  "I worked so hard on this for you 😢",
-  "okay but... have you seen the Yes button? 👀",
-  "I'll be devastated forever 😩",
+  "please... 🥺",
+  "wait wait, not that one 😳",
+  "pretty pretty please? 🙏",
+  "my heart just did a little flip 💔",
+  "I stayed up making this just for you 😢",
+  "psst, the Yes button is right there 👉💛",
+  "don't do this to me 😩",
   "think of all the fun we'd have!! 🌟",
-  "the Yes button is so lonely right now 💛",
-  "I made a whole calendar just for us 📅",
-  "I promise it'll be magical ✨",
-  "I'm literally crying rn 😭💧",
-  "one tiny yes? pretty please? 🌸",
-  "my soul is leaving my body 😰",
-  "are you sure?? like really sure?? 🥹",
-  "okay I'll just sit here and cry then 🫂",
-  "...this is fine 🙂 (it is NOT fine) 💔",
-  "the character is also crying now look 😢👆",
-  "last chance... I believe in you!! 🫶",
-  "PLEASE just hit Yes I am begging 🙏💛",
+  "the Yes button's getting lonely over there 💛",
+  "I planned a whole day for us already 📅",
+  "it's going to be so good, I promise ✨",
+  "okay now I'm actually a little emotional 😭",
+  "one tiny yes? just one? 🌸",
+  "my knees are shaking rn, not kidding 🥹",
+  "are you doing this on purpose 😳",
+  "fine... I'll just wait right here forever 🫂",
+  "totally fine. not crying. 🙂💔",
+  "even the little guy is begging now, look 👆😢",
+  "last chance, JuJuBi... I believe in you 🫶",
+  "please just say yes, I'm begging you 🙏💛",
 ];
 
 let noAttempts = 0;
-let tx = 0, ty = 0;
-let lastDodge = 0;
+let lastDodge  = 0;
 let lastMsgIdx = -1;
+let fixedMode  = false; // becomes true once the button switches to viewport-teleport mode
 
 function setEmotion(name) {
   if (!chibi) return;
@@ -149,46 +167,74 @@ function setBubbleText(text) {
   }, 250);
 }
 
+// Lock the button into fixed, viewport-relative positioning the first
+// time it needs to flee — captured from its current on-screen spot so
+// there's no visual jump.
+function ensureFixedMode() {
+  if (fixedMode) return;
+  const rect = noBtn.getBoundingClientRect();
+  noBtn.style.position = "fixed";
+  noBtn.style.left     = `${rect.left}px`;
+  noBtn.style.top      = `${rect.top}px`;
+  noBtn.style.margin   = "0";
+  noBtn.style.zIndex   = "60";
+  fixedMode = true;
+}
+
+// Pick a fresh spot fully inside the viewport, biased to be as far
+// from the pointer as possible — a handful of random candidates,
+// keep the best. This can never get "cornered": every dodge is a
+// fresh roll across the whole screen, not an incremental nudge.
+function pickDodgeTarget(px, py) {
+  const margin = 18;
+  const w = noBtn.offsetWidth  || 90;
+  const h = noBtn.offsetHeight || 46;
+  const maxX = Math.max(margin, window.innerWidth  - w - margin);
+  const maxY = Math.max(margin, window.innerHeight - h - margin);
+
+  let best = null, bestDist = -1;
+  for (let i = 0; i < 10; i++) {
+    const x  = margin + Math.random() * (maxX - margin);
+    const y  = margin + Math.random() * (maxY - margin);
+    const cx = x + w / 2, cy = y + h / 2;
+    const d  = Math.hypot(cx - px, cy - py);
+    if (d > bestDist) { bestDist = d; best = { x, y }; }
+  }
+  return best;
+}
+
 function dodgeNoButton(event, force = false) {
   if (reduceMotion) return;
 
   const now = performance.now();
-  if (!force && now - lastDodge < 200) return;
+  if (!force && now - lastDodge < 160) return;
 
-  const btn = noBtn.getBoundingClientRect();
-  const cx  = btn.left + btn.width  / 2;
-  const cy  = btn.top  + btn.height / 2;
-  const px  = event?.clientX ?? cx;
-  const py  = event?.clientY ?? cy;
+  const rect = noBtn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  const px = event?.clientX ?? cx;
+  const py = event?.clientY ?? cy;
   const dist = Math.hypot(px - cx, py - cy);
 
-  if (!force && dist > 140) return;
+  if (!force && dist > 170) return;
 
   lastDodge = now;
   noAttempts++;
 
-  // Direction away from pointer
-  const rawDx = cx - px || 1;
-  const rawDy = cy - py || 1;
-  const len   = Math.hypot(rawDx, rawDy) || 1;
-  const nx    = rawDx / len;
-  const ny    = rawDy / len;
+  ensureFixedMode();
+  const target = pickDodgeTarget(px, py);
+  noBtn.style.left = `${target.x}px`;
+  noBtn.style.top  = `${target.y}px`;
 
-  const maxX = 150;
-  const maxY = 90;
-
-  tx = Math.max(-maxX, Math.min(maxX, tx + nx * (55 + Math.random() * 35)));
-  ty = Math.max(-maxY, Math.min(maxY, ty + ny * (28 + Math.random() * 18)));
-
-  const scale   = Math.max(.4, 1 - noAttempts * .028);
-  const opacity = Math.max(.22, 1 - noAttempts * .045);
-
-  // Apply smooth transform via CSS transition
-  noBtn.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  // Stays clearly visible and clickable-looking — it just isn't ever
+  // where the cursor is. Gentle shrink/fade only, never disappearing.
+  const scale   = Math.max(.62, 1 - noAttempts * .016);
+  const opacity = Math.max(.6,  1 - noAttempts * .018);
+  noBtn.style.transform = `scale(${scale})`;
   noBtn.style.opacity   = String(opacity);
 
-  // Grow the Yes button
-  yesBtn.style.transform = `scale(${Math.min(1.85, 1 + noAttempts * .07)})`;
+  // Grow the Yes button in response
+  yesBtn.style.transform = `scale(${Math.min(1.7, 1 + noAttempts * .05)})`;
 
   // Update speech bubble
   const idx = (noAttempts - 1) % noLines.length;
@@ -202,23 +248,32 @@ function dodgeNoButton(event, force = false) {
   else if (noAttempts % 3 === 0) setEmotion("panic");
   else                           setEmotion("sad");
 
-  // Label fades
-  if (noAttempts > 8)  noBtn.textContent = "not today";
-  if (noAttempts > 14) noBtn.style.fontSize = ".7rem";
+  if (noAttempts > 10) noBtn.textContent = "not today 🥹";
 }
 
-// Attach listeners to the whole ask section so dodge starts before cursor reaches button
-askSection.addEventListener("pointermove",  (e) => dodgeNoButton(e));
-noBtn.addEventListener("pointerenter",      (e) => dodgeNoButton(e, true));
-noBtn.addEventListener("pointerdown",       (e) => { e.preventDefault(); dodgeNoButton(e, true); });
-noBtn.addEventListener("click",             (e) => { e.preventDefault(); dodgeNoButton(e, true); });
+// Global proximity flee — starts dodging before the cursor even
+// reaches the button, from anywhere on the page.
+document.addEventListener("pointermove", (e) => dodgeNoButton(e));
+noBtn.addEventListener("pointerenter",    (e) => dodgeNoButton(e, true));
+noBtn.addEventListener("pointerdown",     (e) => { e.preventDefault(); dodgeNoButton(e, true); });
+noBtn.addEventListener("click",           (e) => { e.preventDefault(); dodgeNoButton(e, true); });
 
-// Also trigger on mobile touch
+// Mobile touch — dodge away on first touch so the tap never lands
 noBtn.addEventListener("touchstart", (e) => {
   e.preventDefault();
   const t = e.touches[0];
   dodgeNoButton({ clientX: t.clientX, clientY: t.clientY }, true);
 }, { passive: false });
+
+// Keep the button on-screen if the viewport resizes/rotates
+window.addEventListener("resize", () => {
+  if (!fixedMode) return;
+  const rect = noBtn.getBoundingClientRect();
+  const maxX = window.innerWidth  - rect.width  - 18;
+  const maxY = window.innerHeight - rect.height - 18;
+  noBtn.style.left = `${Math.min(rect.left, Math.max(18, maxX))}px`;
+  noBtn.style.top  = `${Math.min(rect.top,  Math.max(18, maxY))}px`;
+});
 
 
 // ════════════════════════════════════════════════════════════════
@@ -235,9 +290,13 @@ function showCelebration() {
   overlay.hidden = false;
   overlay.style.display = "";
 
-  // Launch burst: hearts + flowers + rings
-  burstParticles(100);
+  // Launch a fuller celebration: hearts rising, confetti falling,
+  // and expanding rings, staggered for a livelier build.
+  burstParticles(90);
+  launchConfettiFall(70);
   launchRings();
+  setTimeout(() => burstParticles(45), 900);
+  setTimeout(() => launchRings(), 1400);
 
   setTimeout(() => {
     overlay.style.transition = "opacity .7s ease";
@@ -247,7 +306,7 @@ function showCelebration() {
       overlay.style.cssText = "";
       revealDateSection();
     }, 720);
-  }, 4000);
+  }, 4500);
 }
 
 // Hearts AND flower petals rising from bottom
@@ -271,6 +330,33 @@ function burstParticles(count) {
       `font-size:${isFlower ? 22 + Math.random() * 20 : 14 + Math.random() * 28}px`,
       `pointer-events:none`,
       `animation:heartRise ${1.5 + Math.random() * 2.8}s ease-out ${Math.random() * 1.2}s forwards`,
+      `--spin:${spin}deg`,
+    ].join(";");
+    container.append(el);
+    el.addEventListener("animationend", () => el.remove(), { once: true });
+  }
+}
+
+// Confetti-style ribbons falling from the top, layered with the
+// rising hearts for a fuller, more festive burst.
+function launchConfettiFall(count) {
+  const container = $("#celebrate-hearts");
+  const colors = ["#D98A94","#B85C68","#E8B86D","#F5D898","#FF87AB","#FFB7C5"];
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "c-confetti";
+    const spin = -260 + Math.random() * 520;
+    el.style.setProperty("--spin", `${spin}deg`);
+    el.style.cssText = [
+      `position:absolute`,
+      `left:${Math.random() * 100}%`,
+      `top:${-8 - Math.random() * 12}%`,
+      `background:${colors[Math.floor(Math.random() * colors.length)]}`,
+      `width:${5 + Math.random() * 5}px`,
+      `height:${9 + Math.random() * 8}px`,
+      `pointer-events:none`,
+      `animation:confettiFall ${2.2 + Math.random() * 2.2}s ease-in ${Math.random() * 1.4}s forwards`,
       `--spin:${spin}deg`,
     ].join(";");
     container.append(el);
@@ -308,6 +394,19 @@ function buildMiniCalendar() {
   const grid = $("#mini-cal-grid");
   if (!grid || grid.children.length > 0) return;
 
+  // A few soft hearts drifting around the calendar card, purely decorative
+  const calCard = $(".mini-calendar");
+  if (calCard && !calCard.querySelector(".cal-deco")) {
+    const decos = ["♥", "✦", "♥", "✧"];
+    decos.forEach((sym, i) => {
+      const d = document.createElement("span");
+      d.className = `cal-deco cal-deco-${i + 1}`;
+      d.textContent = sym;
+      d.setAttribute("aria-hidden", "true");
+      calCard.append(d);
+    });
+  }
+
   const year = 2026, month = 8, specialDay = 14;
   const firstDow    = new Date(year, month, 1).getDay();  // Tuesday = 2
   const daysInMonth = new Date(year, month + 1, 0).getDate(); // 30
@@ -332,26 +431,46 @@ function buildMiniCalendar() {
 
 
 // ════════════════════════════════════════════════════════════════
-// 8. SEND BUTTON — mailto with date, location, note
+// 8. SEND BUTTON — delivers her note straight to YOUR_EMAIL via
+//    EmailJS. No mail client opens, no extra step for her — she
+//    presses Send and that's the whole action.
 // ════════════════════════════════════════════════════════════════
-$("#send-button").addEventListener("click", () => {
+const sendBtn = $("#send-button");
+const sendBtnOriginalHTML = sendBtn.innerHTML;
+
+sendBtn.addEventListener("click", () => {
   const note     = $("#date-note").value.trim();
   const location = ($("#location-name")?.textContent || DATE_LOCATION).trim();
 
-  const subject = encodeURIComponent("I'm excited for our date! 💛");
-  const body    = encodeURIComponent([
-    `Date: ${DATE_DISPLAY}`,
-    `Location: ${location}`,
-    "",
-    note ? `Her note: ${note}` : "(no note added — see you there! 💛)",
-  ].join("\n"));
+  if (!window.emailjs || EMAILJS_PUBLIC_KEY === "YOUR_EMAILJS_PUBLIC_KEY") {
+    console.warn("EmailJS isn't configured yet — see the comment block at the top of script.js.");
+    showClosing();
+    return;
+  }
 
-  window.location.href = `mailto:${YOUR_EMAIL}?subject=${subject}&body=${body}`;
+  sendBtn.disabled  = true;
+  sendBtn.innerHTML = "Sending... 💌";
 
-  setTimeout(() => {
-    const closing = $("#closing");
-    closing.hidden = false;
-    closing.style.display = "";
-    closing.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-  }, 850);
+  const params = {
+    to_email: YOUR_EMAIL,
+    date:     DATE_DISPLAY,
+    location: location,
+    note:     note || "(no note added — see you there! 💛)",
+  };
+
+  window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+    .then(() => { showClosing(); })
+    .catch((err) => {
+      console.error("EmailJS send failed:", err);
+      sendBtn.disabled  = false;
+      sendBtn.innerHTML = sendBtnOriginalHTML;
+      alert("That didn't quite send — mind trying again in a moment? 💛");
+    });
 });
+
+function showClosing() {
+  const closing = $("#closing");
+  closing.hidden = false;
+  closing.style.display = "";
+  closing.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+}

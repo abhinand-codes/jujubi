@@ -107,7 +107,7 @@
       <div class="pleading" id="pleading">
         <!-- Thought bubble -->
         <div class="bubble" id="no-message">
-          <span class="bubble-text">wait... 🥺</span>
+          <span class="bubble-text">please... 🥺</span>
         </div>
 
         <!--
@@ -295,10 +295,11 @@
       <div class="closing-motifs" aria-hidden="true">
         <span>♥</span><span>✦</span><span>♥</span><span>✧</span><span>♥</span>
       </div>
-      <p class="eyebrow">it's going to be perfect</p>
-      <h2 id="closing-title">See you soon <span aria-hidden="true">💛</span></h2>
-      <p class="closing-sub">September 14, Dharamshala — our first.</p>
-      <p class="closing-footer">Can't wait, JuJuBi ♡</p>
+      <p class="eyebrow">already counting the hours</p>
+      <h2 id="closing-title">It's really happening <span aria-hidden="true">💛</span></h2>
+      <p class="closing-sub">September 14th, Dharamshala — just the two of us, finally.</p>
+      <p class="closing-footer">Save me a seat next to you, JuJuBi. ♡</p>
+      <p class="closing-note-ack">your words just landed safely in my inbox — and somewhere much warmer, too 💌</p>
     </section>
 
   </main>
@@ -311,12 +312,17 @@
     <!-- Hearts burst container (JS-populated) -->
     <div class="celebrate-hearts" id="celebrate-hearts"></div>
     <div class="celebrate-message">
+      <span class="celebrate-bigheart" aria-hidden="true">💛</span>
       <p class="celebrate-eyebrow">she said yes!! 💛</p>
-      <h2 class="celebrate-heading">I knew it! 🎉</h2>
-      <p class="celebrate-sub">Scroll down for the best part...</p>
+      <h2 class="celebrate-heading shimmer-text">I knew it!! 🎉</h2>
+      <p class="celebrate-sub">Scroll down, the best part's next... 💌</p>
     </div>
   </div>
 
+  <!-- EmailJS delivers her note straight to your inbox on Send —
+       no mail client opens, no extra step for her. See the config
+       block at the top of script.js to finish setup. -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
