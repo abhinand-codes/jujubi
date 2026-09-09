@@ -25,7 +25,8 @@ const EMAILJS_TEMPLATE_ID = "template_8qhwif6";
 // ──────────────────────────────────────────────────────────────
 
 if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
-  window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  try { window.emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) {}
+  try { window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch(e) {}
 }
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -465,19 +466,26 @@ sendBtn.addEventListener("click", () => {
   sendBtn.innerHTML = "Sending... 💌";
 
   const params = {
-    to_email: YOUR_EMAIL,
-    name:     "JuJuBi 💛",
-    time:     `${DATE_DISPLAY} — ${location}`,
-    message:  note ? `Date: ${DATE_DISPLAY}\nLocation: ${location}\nHer Note: ${note}` : `Date: ${DATE_DISPLAY}\nLocation: ${location}\n(No note added — see you there! 💛)`,
-    date:     DATE_DISPLAY,
-    location: location,
-    note:     note || "(no note added — see you there! 💛)",
+    to_email:   YOUR_EMAIL,
+    from_email: YOUR_EMAIL,
+    email:      YOUR_EMAIL,
+    reply_to:   YOUR_EMAIL,
+    from_name:  "JuJuBi 💛",
+    name:       "JuJuBi 💛",
+    time:       `${DATE_DISPLAY} — ${location}`,
+    message:    note ? `Date: ${DATE_DISPLAY}\nLocation: ${location}\nHer Note: ${note}` : `Date: ${DATE_DISPLAY}\nLocation: ${location}\n(No note added — see you there! 💛)`,
+    date:       DATE_DISPLAY,
+    location:   location,
+    note:       note || "(no note added — see you there! 💛)",
   };
 
-  window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
-    .then(() => { showClosing(); })
+  window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params, EMAILJS_PUBLIC_KEY)
+    .then((res) => {
+      console.log("EmailJS send success:", res);
+      showClosing();
+    })
     .catch((err) => {
-      console.warn("EmailJS send API notice, proceeding smoothly to closing screen:", err);
+      console.error("EmailJS send API error details:", err);
       showClosing();
     });
 });
