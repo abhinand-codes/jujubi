@@ -103,18 +103,115 @@
       <p class="eyebrow">the big question</p>
       <h2 id="ask-title" class="shimmer-text">Will you go out with me?</h2>
 
-      <!-- Pleading chibi character -->
-      <div class="pleading" id="pleading" aria-live="polite">
-        <div class="bubble" id="no-message">wait... 🥺</div>
-        <div class="face" id="face" aria-hidden="true">
-          <i class="eye left"></i>
-          <i class="eye right"></i>
-          <i class="blush blush-left"></i>
-          <i class="blush blush-right"></i>
-          <i class="mouth"></i>
-          <i class="hand hand-left"></i>
-          <i class="hand hand-right"></i>
+      <!-- Pleading character -->
+      <div class="pleading" id="pleading">
+        <!-- Thought bubble -->
+        <div class="bubble" id="no-message">
+          <span class="bubble-text">wait... 🥺</span>
         </div>
+
+        <!--
+          SVG Chibi character — 4 emotion layers toggled via JS class:
+          .chibi-normal  .chibi-sad  .chibi-panic  .chibi-excited
+        -->
+        <svg class="chibi-svg chibi-normal" id="chibi-svg"
+             viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg"
+             aria-hidden="true">
+
+          <!-- Hair back -->
+          <ellipse cx="80" cy="70" rx="57" ry="55" fill="#3E2A1A"/>
+
+          <!-- Ears -->
+          <ellipse cx="24" cy="98" rx="13" ry="18" fill="#F4BDAC"/>
+          <ellipse cx="24" cy="98" rx="8"  ry="12" fill="#F8CBBC"/>
+          <ellipse cx="136" cy="98" rx="13" ry="18" fill="#F4BDAC"/>
+          <ellipse cx="136" cy="98" rx="8"  ry="12" fill="#F8CBBC"/>
+
+          <!-- Face base -->
+          <ellipse cx="80" cy="108" rx="53" ry="52" fill="#F4BDAC"/>
+
+          <!-- Cheek blush (always) -->
+          <ellipse cx="42"  cy="116" rx="14" ry="9" fill="rgba(218,100,110,.35)"/>
+          <ellipse cx="118" cy="116" rx="14" ry="9" fill="rgba(218,100,110,.35)"/>
+
+          <!-- ══ NORMAL ══ -->
+          <g class="el el-normal">
+            <ellipse cx="58"  cy="98"  rx="12" ry="14" fill="#2D1F14"/>
+            <ellipse cx="62"  cy="93"  rx="5"  ry="6"  fill="white" opacity=".9"/>
+            <circle  cx="63.5" cy="92" r="2.5"         fill="white"/>
+            <ellipse cx="102" cy="98"  rx="12" ry="14" fill="#2D1F14"/>
+            <ellipse cx="106" cy="93"  rx="5"  ry="6"  fill="white" opacity=".9"/>
+            <circle  cx="107.5" cy="92" r="2.5"        fill="white"/>
+            <path d="M 64 124 Q 80 135 96 124" stroke="#3A2C2E" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+          </g>
+
+          <!-- ══ SAD ══ -->
+          <g class="el el-sad" opacity="0">
+            <!-- droopy eyes -->
+            <ellipse cx="58"  cy="100" rx="11" ry="10" fill="#2D1F14"/>
+            <ellipse cx="62"  cy="96"  rx="4"  ry="5"  fill="white" opacity=".9"/>
+            <ellipse cx="102" cy="100" rx="11" ry="10" fill="#2D1F14"/>
+            <ellipse cx="106" cy="96"  rx="4"  ry="5"  fill="white" opacity=".9"/>
+            <!-- sad brows -->
+            <path d="M 46 88 Q 57 93 68 90" stroke="#3A2C2E" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 92 90 Q 103 93 114 88" stroke="#3A2C2E" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- frown -->
+            <path d="M 64 128 Q 80 120 96 128" stroke="#3A2C2E" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+            <!-- tears -->
+            <ellipse class="chibi-tear" cx="48"  cy="114" rx="4" ry="6" fill="rgba(130,190,255,.8)"/>
+            <ellipse class="chibi-tear" cx="112" cy="114" rx="4" ry="6" fill="rgba(130,190,255,.8)"/>
+          </g>
+
+          <!-- ══ PANIC ══ -->
+          <g class="el el-panic" opacity="0">
+            <!-- wide eyes -->
+            <ellipse cx="58"  cy="97"  rx="14" ry="16" fill="#2D1F14"/>
+            <ellipse cx="63"  cy="91"  rx="6"  ry="7"  fill="white"/>
+            <circle  cx="64"  cy="90"  r="3"           fill="white"/>
+            <ellipse cx="102" cy="97"  rx="14" ry="16" fill="#2D1F14"/>
+            <ellipse cx="107" cy="91"  rx="6"  ry="7"  fill="white"/>
+            <circle  cx="108" cy="90"  r="3"           fill="white"/>
+            <!-- raised brows -->
+            <path d="M 44 84 Q 57 78 70 84" stroke="#3A2C2E" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 90 84 Q 103 78 116 84" stroke="#3A2C2E" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- O mouth -->
+            <ellipse cx="80" cy="126" rx="10" ry="9"  fill="#3A2C2E"/>
+            <ellipse cx="80" cy="126" rx="7"  ry="6"  fill="#D98A94"/>
+          </g>
+
+          <!-- ══ EXCITED ══ -->
+          <g class="el el-excited" opacity="0">
+            <!-- squint happy eyes -->
+            <path d="M 46 98 Q 58 89 70 98" stroke="#2D1F14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <path d="M 90 98 Q 102 89 114 98" stroke="#2D1F14" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <!-- extra rosy cheeks -->
+            <ellipse cx="42"  cy="112" rx="17" ry="11" fill="rgba(220,100,110,.52)"/>
+            <ellipse cx="118" cy="112" rx="17" ry="11" fill="rgba(220,100,110,.52)"/>
+            <!-- big smile -->
+            <path d="M 60 122 Q 80 140 100 122" stroke="#3A2C2E" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- sparkles -->
+            <text x="16"  y="88" font-size="14" fill="#E8B86D" font-family="serif">✦</text>
+            <text x="128" y="88" font-size="14" fill="#E8B86D" font-family="serif">✦</text>
+          </g>
+
+          <!-- Nose (always on top) -->
+          <path d="M 77 112 Q 80 117 83 112" stroke="rgba(58,44,46,.35)" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+          <!-- Hair front / fringe -->
+          <ellipse cx="80" cy="54" rx="56" ry="32" fill="#3E2A1A"/>
+          <path d="M 28 62 Q 44 86 54 76" stroke="#3E2A1A" stroke-width="14" fill="none" stroke-linecap="round"/>
+          <path d="M 56 52 Q 62 76 68 70" stroke="#3E2A1A" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M 104 52 Q 98 76 92 70" stroke="#3E2A1A" stroke-width="11" fill="none" stroke-linecap="round"/>
+          <path d="M 132 62 Q 116 86 106 76" stroke="#3E2A1A" stroke-width="14" fill="none" stroke-linecap="round"/>
+          <!-- hair shine -->
+          <ellipse cx="50" cy="40" rx="13" ry="7" fill="rgba(255,255,255,.13)" transform="rotate(-22 50 40)"/>
+
+          <!-- Hands / paws -->
+          <ellipse cx="42"  cy="152" rx="18" ry="15" fill="#F4BDAC"/>
+          <ellipse cx="118" cy="152" rx="18" ry="15" fill="#F4BDAC"/>
+          <path d="M 32 146 Q 42 138 52 146" stroke="rgba(58,44,46,.18)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M 108 146 Q 118 138 128 146" stroke="rgba(58,44,46,.18)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
       </div>
 
       <div class="choice-area" id="choice-area">

@@ -16,6 +16,29 @@
 }
 
 /* ──────────────────────────────────────────────────────────────
+   CELEBRATION BURST RINGS
+   Expanding glow rings from center on Yes click
+────────────────────────────────────────────────────────────── */
+.burst-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: 3px solid rgba(232,184,109,.7);
+  animation: ringExpand 1.2s ease-out both;
+  pointer-events: none;
+}
+.burst-ring:nth-child(2) { border-color: rgba(217,138,148,.6); }
+.burst-ring:nth-child(3) { border-color: rgba(184,92,104,.5); }
+.burst-ring:nth-child(4) { border-color: rgba(245,216,152,.5); }
+@keyframes ringExpand {
+  from { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+  to   { transform: translate(-50%,-50%) scale(60);  opacity: 0; }
+}
+
+/* ──────────────────────────────────────────────────────────────
    CELEBRATION HEART RISE
    Used by JS: animation: heartRise <duration>s ease-out forwards
 ────────────────────────────────────────────────────────────── */

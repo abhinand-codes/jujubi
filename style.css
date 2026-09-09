@@ -357,120 +357,115 @@ h2 span { font-size: .6em; vertical-align: middle; }
 }
 @keyframes shimmer { to { background-position: 200% center; } }
 
-/* ── Pleading character ── */
+/* ── Thought bubble ── */
 .pleading {
-  height: 11.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  gap: .5rem;
+  gap: .6rem;
+  margin-bottom: .5rem;
 }
 .bubble {
   position: relative;
-  padding: .55rem 1.05rem;
+  padding: .65rem 1.2rem;
   background: var(--white);
-  border-radius: 1.2rem;
+  border-radius: 1.4rem 1.4rem 1.4rem .4rem;
   color: var(--deep-rose);
-  font-size: .87rem;
-  font-weight: 500;
-  box-shadow: var(--shadow-sm);
-  max-width: 16rem;
-  transition: opacity .2s;
+  font-size: .92rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm), 0 0 0 1.5px rgba(217,138,148,.18);
+  max-width: 18rem;
+  min-height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
+/* Animated tail on the bubble */
 .bubble::after {
   content: "";
   position: absolute;
-  bottom: -.38rem;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  width: .76rem;
-  height: .76rem;
+  bottom: -.55rem;
+  left: 1.6rem;
+  width: .9rem;
+  height: .9rem;
   background: var(--white);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  filter: drop-shadow(-1px 1px 0 rgba(217,138,148,.14));
+}
+.bubble-text {
+  transition: opacity .25s ease;
+}
+.bubble.changing .bubble-text { opacity: 0; }
+
+/* ── Chibi SVG character ── */
+.chibi-svg {
+  width: 9rem;
+  height: auto;
+  filter: drop-shadow(0 8px 18px rgba(115,64,73,.18));
+  animation: chibiBob 3s ease-in-out infinite;
+  cursor: default;
+}
+@keyframes chibiBob {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
 }
 
-/* Face */
-.face {
-  width: 6.6rem;
-  height: 5.9rem;
-  position: relative;
-  flex-shrink: 0;
-  border-radius: 48% 48% 44% 44%;
-  background: #f4bdac;
-  box-shadow: inset 0 -9px 0 rgba(217,138,148,.14);
-  animation: faceBob 3.3s ease-in-out infinite;
-}
-@keyframes faceBob { 50% { transform: translateY(-5px); } }
+/* Emotion layers: all hidden, active one shown via class on the SVG root */
+.chibi-svg .el { transition: opacity .35s ease; }
+.chibi-svg .el-normal  { opacity: 1; }
+.chibi-svg .el-sad     { opacity: 0; }
+.chibi-svg .el-panic   { opacity: 0; }
+.chibi-svg .el-excited { opacity: 0; }
 
-.eye {
-  position: absolute;
-  top: 2rem;
-  width: .38rem;
-  height: .68rem;
-  border-radius: 50%;
-  background: var(--ink);
-  transition: transform .25s ease, height .25s ease;
-}
-.eye.left  { left: 1.75rem; }
-.eye.right { right: 1.75rem; }
-
-.blush {
-  position: absolute;
-  top: 2.9rem;
-  width: 1.05rem;
-  height: .44rem;
-  border-radius: 50%;
-  background: rgba(217,100,112,.42);
-}
-.blush-left  { left: .8rem; }
-.blush-right { right: .8rem; }
-
-.mouth {
-  position: absolute;
-  left: 50%;
-  top: 3.42rem;
-  width: .65rem;
-  height: .42rem;
-  border-bottom: 2.5px solid var(--ink);
-  border-radius: 50%;
-  transform: translateX(-50%);
-  transition: width .25s ease, transform .25s ease, border-color .25s ease;
+/* When sad: show only sad layer */
+.chibi-sad .el-normal  { opacity: 0; }
+.chibi-sad .el-sad     { opacity: 1; }
+.chibi-sad  { animation: chibiBob 3s ease-in-out infinite, chibiSad .5s ease; }
+@keyframes chibiSad {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(4px) scaleX(.97); }
 }
 
-.hand {
-  position: absolute;
-  top: 4.5rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  border-radius: 50%;
-  background: #f4bdac;
+/* Tears bounce down */
+.chibi-sad .chibi-tear {
+  animation: tearDrop 1.2s ease-in-out infinite;
 }
-.hand-left  { left: 1.2rem; }
-.hand-right { right: 1.2rem; }
+@keyframes tearDrop {
+  0%   { transform: translateY(0);    opacity: .8; }
+  80%  { transform: translateY(10px); opacity: .2; }
+  100% { transform: translateY(0);    opacity: .8; }
+}
 
-/* Face expression states */
-.face.dramatic { animation: faceShake .4s ease-in-out, faceBob 3.3s 0.4s ease-in-out infinite; }
-@keyframes faceShake {
-  15% { transform: translateX(-6px); }
-  35% { transform: translateX(6px); }
-  55% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+/* When panicking: wide eyes, shaking */
+.chibi-panic .el-normal  { opacity: 0; }
+.chibi-panic .el-panic   { opacity: 1; }
+.chibi-panic { animation: chibiShake .35s ease-in-out, chibiBob 3s .35s ease-in-out infinite; }
+@keyframes chibiShake {
+  10% { transform: translateX(-7px); }
+  30% { transform: translateX(7px); }
+  50% { transform: translateX(-5px); }
+  70% { transform: translateX(5px); }
+  90% { transform: translateX(-2px); }
   to  { transform: none; }
 }
-.face.melting  { border-radius: 48% 48% 58% 42%; }
-.face.melting .mouth { width: .9rem; border-bottom-color: var(--deep-rose); }
-.face.excited .eye  { transform: scaleY(.28); }
-.face.excited .mouth { width: 1rem; }
+
+/* When excited: happy squint, bouncing */
+.chibi-excited .el-normal  { opacity: 0; }
+.chibi-excited .el-excited { opacity: 1; }
+.chibi-excited { animation: chibiJump .5s var(--ease-spring), chibiBob 3s .5s ease-in-out infinite; }
+@keyframes chibiJump {
+  40% { transform: translateY(-14px) scale(1.04); }
+  to  { transform: none; }
+}
 
 /* ── Choice buttons ── */
 .choice-area {
-  position: relative;
-  width: min(100%, 26rem);
-  height: 7rem;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1.4rem;
+  margin-top: .5rem;
 }
 
 .yes-button {
@@ -497,15 +492,16 @@ h2 span { font-size: .6em; vertical-align: middle; }
 
 .no-button {
   padding: .8rem 1.65rem;
-  background: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.84);
   color: var(--ink-mid);
   border-radius: 999px;
   font-weight: 500;
   font-size: .95rem;
-  /* Smooth dodge via CSS transition — transform set by JS */
-  transition: transform .45s var(--ease-out), opacity .4s ease, font-size .3s ease;
+  /* Smooth dodge via CSS transition on transform */
+  transition: transform .5s var(--ease-out), opacity .45s ease, font-size .3s ease;
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  will-change: transform;
 }
 
 /* ══════════════════════════════════════════════════════════════
