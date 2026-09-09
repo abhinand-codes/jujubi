@@ -207,7 +207,7 @@ function dodgeNoButton(event, force = false) {
   if (reduceMotion) return;
 
   const now = performance.now();
-  if (!force && now - lastDodge < 160) return;
+  if (!force && now - lastDodge < 130) return;
 
   const rect = noBtn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
@@ -216,7 +216,7 @@ function dodgeNoButton(event, force = false) {
   const py = event?.clientY ?? cy;
   const dist = Math.hypot(px - cx, py - cy);
 
-  if (!force && dist > 170) return;
+  if (!force && dist > 195) return;
 
   lastDodge = now;
   noAttempts++;
@@ -229,12 +229,15 @@ function dodgeNoButton(event, force = false) {
   // Stays clearly visible, active-looking, and clickable at all times —
   // just never where the cursor is. Very light shrink/fade only.
   const scale   = Math.max(.8, 1 - noAttempts * .01);
-  const opacity = Math.max(.82, 1 - noAttempts * .01);
+  const opacity = Math.max(.85, 1 - noAttempts * .008);
   noBtn.style.transform = `scale(${scale})`;
   noBtn.style.opacity   = String(opacity);
 
-  // Grow the Yes button's heartbeat via CSS variable (keeps it beating)
-  yesBtn.style.setProperty("--grow", Math.min(1.7, 1 + noAttempts * .05).toFixed(3));
+  // Grow the Yes button's heartbeat scale (keeps it double-thumping continuously)
+  const grow = Math.min(1.65, 1 + noAttempts * .045);
+  yesBtn.style.setProperty("--yes-scale", grow.toFixed(3));
+  yesBtn.style.setProperty("--yes-pop1", (grow * 1.14).toFixed(3));
+  yesBtn.style.setProperty("--yes-pop2", (grow * 1.07).toFixed(3));
 
   // Update speech bubble
   const idx = (noAttempts - 1) % noLines.length;
@@ -253,8 +256,10 @@ function dodgeNoButton(event, force = false) {
 // reaches the button, from anywhere on the page.
 document.addEventListener("pointermove", (e) => dodgeNoButton(e));
 noBtn.addEventListener("pointerenter",    (e) => dodgeNoButton(e, true));
+noBtn.addEventListener("mouseover",       (e) => dodgeNoButton(e, true));
 noBtn.addEventListener("pointerdown",     (e) => { e.preventDefault(); dodgeNoButton(e, true); });
 noBtn.addEventListener("click",           (e) => { e.preventDefault(); dodgeNoButton(e, true); });
+noBtn.addEventListener("focus",           (e) => dodgeNoButton(e, true));
 
 // Mobile touch — dodge away on first touch so the tap never lands
 noBtn.addEventListener("touchstart", (e) => {
