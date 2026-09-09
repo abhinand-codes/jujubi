@@ -471,6 +471,9 @@ sendBtn.addEventListener("click", () => {
 
   const params = {
     to_email: YOUR_EMAIL,
+    name:     "JuJuBi 💛",
+    time:     `${DATE_DISPLAY} at ${location}`,
+    message:  note ? `Confirmed Date: ${DATE_DISPLAY}\nLocation: ${location}\nHer Note: ${note}` : `JuJuBi confirmed our date! 💛\n\nDate: ${DATE_DISPLAY}\nLocation: ${location}`,
     date:     DATE_DISPLAY,
     location: location,
     note:     note || "(no note added — see you there! 💛)",
