@@ -226,6 +226,7 @@ yesBtn.addEventListener("click", () => {
 function showCelebration() {
   const overlay = $("#celebrate-overlay");
   overlay.hidden = false;
+  overlay.style.display = "";   // clear inline display:none, let CSS flex take over
   burstHearts(90);   // fill screen with floating hearts
 
   // After ~3.4 s, fade overlay out and slide to date section
@@ -269,6 +270,7 @@ function burstHearts(count) {
 function revealDateSection() {
   const section = $("#date-reveal");
   section.hidden = false;
+  section.style.display = "";   // clear inline display:none
 
   // Allow one frame for the browser to render the (previously hidden) section
   requestAnimationFrame(() => {
@@ -347,6 +349,7 @@ $("#send-button").addEventListener("click", () => {
   setTimeout(() => {
     const closing = $("#closing");
     closing.hidden = false;
+    closing.style.display = "";   // clear inline display:none
     closing.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
   }, 850);
 });
