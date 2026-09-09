@@ -19,7 +19,7 @@
 const YOUR_EMAIL         = "abhinandthirteen@gmail.com"; // ← where her note is delivered
 const DATE_DISPLAY       = "September 14, 2026";          // ← shown in the email
 const DATE_LOCATION      = "Dharamshala";                  // ← venue
-const EMAILJS_PUBLIC_KEY  = "PASTE_YOUR_PUBLIC_KEY_HERE";
+const EMAILJS_PUBLIC_KEY  = "5wm455mE3dnm1IJNO";
 const EMAILJS_SERVICE_ID  = "service_lhy1dbf";
 const EMAILJS_TEMPLATE_ID = "PASTE_YOUR_TEMPLATE_ID_HERE";
 // ──────────────────────────────────────────────────────────────
