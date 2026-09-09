@@ -21,7 +21,7 @@ const DATE_DISPLAY       = "September 14, 2026";          // ← shown in the em
 const DATE_LOCATION      = "Dharamshala";                  // ← venue
 const EMAILJS_PUBLIC_KEY  = "5wm455mE3dnm1IJNO";
 const EMAILJS_SERVICE_ID  = "service_lhy1dbf";
-const EMAILJS_TEMPLATE_ID = "PASTE_YOUR_TEMPLATE_ID_HERE";
+const EMAILJS_TEMPLATE_ID = "template_8qhwif6";
 // ──────────────────────────────────────────────────────────────
 
 if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
