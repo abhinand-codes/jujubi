@@ -41,38 +41,47 @@ function celebrate(amount = 36) {
   }
 }
 
-// The No button remains inside its own choice area and gets progressively cuter.
-const noButton = $("#no-button"), choiceArea = $("#choice-area"), message = $("#no-message"), face = $(".face");
-const noMessages = ["wait... 🥺", "please don't press that", "I made you a whole calendar!", "okay okay you win, but pretty please say yes?"];
-let noAttempts = 0;
-function dodgeNoButton(event) {
-  if (noButton.disabled || reduceMotion) return;
+// The No button keeps a respectful distance from the cursor, while Yes gets harder to miss.
+const noButton = $("#no-button"), choiceArea = $("#choice-area"), message = $("#no-message"), face = $(".face"), yesButton = $("#yes-button");
+const noMessages = [
+  "wait... 🥺", "hey, that tickles!", "please don't press that", "I made you a whole calendar!",
+  "the Yes button is looking extra cute...", "my little heart is panicking", "you almost had me!", "pretty please choose Yes?",
+  "I promise it'll be lovely", "No is feeling a bit shy today", "one tiny Yes? 💛", "I believe in us!"
+];
+let noAttempts = 0, lastDodge = 0;
+function dodgeNoButton(event, force = false) {
+  if (reduceMotion) return;
+  const now = performance.now();
+  if (!force && now - lastDodge < 230) return;
   const area = choiceArea.getBoundingClientRect();
   const button = noButton.getBoundingClientRect();
-  const pointerX = event.clientX || (button.left + button.width / 2);
-  const pointerY = event.clientY || (button.top + button.height / 2);
-  const directionX = pointerX < button.left + button.width / 2 ? 1 : -1;
-  const directionY = pointerY < button.top + button.height / 2 ? 1 : -1;
-  const maxX = (area.width - button.width) / 2 - 4;
-  const maxY = (area.height - button.height) / 2 - 4;
-  noButton.style.transform = `translate(${directionX * Math.max(38, maxX)}px, ${directionY * Math.min(18, maxY)}px)`;
-}
-function noAttempt(event) {
-  event.preventDefault();
-  if (noButton.disabled) return;
-  dodgeNoButton(event);
+  const pointerX = event.clientX ?? button.left + button.width / 2;
+  const pointerY = event.clientY ?? button.top + button.height / 2;
+  const distance = Math.hypot(pointerX - (button.left + button.width / 2), pointerY - (button.top + button.height / 2));
+  if (!force && distance > 105) return;
+  lastDodge = now;
   noAttempts += 1;
-  message.textContent = noMessages[Math.min(noAttempts, 4) - 1];
-  face.classList.remove("dramatic", "melting");
+  const xDirection = pointerX < button.left + button.width / 2 ? 1 : -1;
+  const yDirection = pointerY < button.top + button.height / 2 ? 1 : -1;
+  const maxX = Math.max(44, (area.width - button.width) / 2 - 7);
+  const maxY = Math.max(16, (area.height - button.height) / 2 - 7);
+  const jitterX = 10 + Math.random() * 20;
+  const jitterY = 7 + Math.random() * 14;
+  noButton.style.transform = `translate(${xDirection * Math.min(maxX, maxX - jitterX)}px, ${yDirection * Math.min(maxY, jitterY)}px) scale(${Math.max(.55, 1 - noAttempts * .022)})`;
+  noButton.style.opacity = `${Math.max(.35, 1 - noAttempts * .035)}`;
+  yesButton.style.setProperty("--yes-scale", Math.min(2.05, 1 + noAttempts * .075));
+  message.textContent = noMessages[(noAttempts - 1) % noMessages.length];
+  face.classList.remove("dramatic", "melting", "excited");
   void face.offsetWidth;
-  face.classList.add(noAttempts > 2 ? "melting" : "dramatic");
-  if (noAttempts >= 4) { noButton.disabled = true; noButton.textContent = "you can't say no to this face"; noButton.style.transform = "none"; }
+  face.classList.add(noAttempts % 3 === 0 ? "melting" : noAttempts % 2 === 0 ? "excited" : "dramatic");
+  noButton.textContent = noAttempts > 7 ? "not today" : "No";
 }
-noButton.addEventListener("pointerenter", dodgeNoButton);
-noButton.addEventListener("pointerdown", dodgeNoButton);
-noButton.addEventListener("click", noAttempt);
+choiceArea.addEventListener("pointermove", (event) => dodgeNoButton(event));
+noButton.addEventListener("pointerenter", (event) => dodgeNoButton(event, true));
+noButton.addEventListener("pointerdown", (event) => { event.preventDefault(); dodgeNoButton(event, true); });
+noButton.addEventListener("click", (event) => { event.preventDefault(); dodgeNoButton(event, true); });
 
-$("#yes-button").addEventListener("click", () => { celebrate(48); setTimeout(() => $("#calendar-section").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 300); });
+yesButton.addEventListener("click", () => { celebrate(48); setTimeout(() => $("#calendar-section").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 300); });
 
 // Calendar: defaults to the current month and only permits today onward.
 const grid = $("#calendar-grid"), monthLabel = $("#month-label"), selection = $("#date-selection"), confirm = $("#confirm-button");
