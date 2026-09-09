@@ -456,12 +456,7 @@ sendBtn.addEventListener("click", () => {
                          EMAILJS_TEMPLATE_ID.includes("PASTE_");
 
   if (isUnconfigured) {
-    console.warn("EmailJS keys are placeholders — triggering mailto: fallback to abhinandthirteen@gmail.com");
-    const subject = encodeURIComponent("JuJuBi said yes! 💛");
-    const body = encodeURIComponent(`JuJuBi confirmed our date! 💛\n\nDate: ${DATE_DISPLAY}\nLocation: ${location}\nHer note: ${note || "(no note added — see you there! 💛)"}`);
-    setTimeout(() => {
-      window.location.href = `mailto:${YOUR_EMAIL}?subject=${subject}&body=${body}`;
-    }, 400);
+    console.warn("EmailJS template ID is not set yet. Paste your Template ID to enable direct email delivery.");
     showClosing();
     return;
   }
