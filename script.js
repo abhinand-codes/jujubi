@@ -233,18 +233,13 @@ function dodgeNoButton(event, force = false) {
   noBtn.style.transform = `scale(${scale})`;
   noBtn.style.opacity   = String(opacity);
 
-  // Grow the Yes button's heartbeat scale (keeps it double-thumping continuously)
-  const grow = Math.min(1.65, 1 + noAttempts * .045);
-  yesBtn.style.setProperty("--yes-scale", grow.toFixed(3));
-  yesBtn.style.setProperty("--yes-pop1", (grow * 1.14).toFixed(3));
-  yesBtn.style.setProperty("--yes-pop2", (grow * 1.07).toFixed(3));
+  // Grow the Yes button in response
+  yesBtn.style.setProperty("--grow", Math.min(1.7, 1 + noAttempts * .05).toFixed(3));
 
   // Update speech bubble
   const idx = (noAttempts - 1) % noLines.length;
-  if (idx !== lastMsgIdx) {
-    setBubbleText(noLines[idx]);
-    lastMsgIdx = idx;
-  }
+  setBubbleText(noLines[idx]);
+  lastMsgIdx = idx;
 
   // Cycle chibi emotions — escalating sadness/panic
   if (noAttempts % 4 === 0)      setEmotion("excited");  // ironic: excited about Yes!
