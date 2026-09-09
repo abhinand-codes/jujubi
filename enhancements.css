@@ -1,0 +1,133 @@
+/* ════════════════════════════════════════════════════════════════
+   JUJUBI — enhancements.css
+   Particle drift, heart-rise burst, button shimmer sweep,
+   card glow ring, and location entrance. Augments style.css.
+════════════════════════════════════════════════════════════════ */
+
+/* ──────────────────────────────────────────────────────────────
+   BACKGROUND PARTICLE DRIFT
+   Used by JS: animation: bgDrift <duration>s linear forwards
+────────────────────────────────────────────────────────────── */
+@keyframes bgDrift {
+  0%   { opacity: 0;   transform: translateY(0)       rotate(0deg); }
+  8%   { opacity: 1; }
+  88%  { opacity: .85; }
+  100% { opacity: 0;   transform: translateY(-108vh)   rotate(380deg); }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   CELEBRATION HEART RISE
+   Used by JS: animation: heartRise <duration>s ease-out forwards
+────────────────────────────────────────────────────────────── */
+@keyframes heartRise {
+  0%   { opacity: 0;   transform: translateY(0)     scale(.5) rotate(0deg); }
+  12%  { opacity: 1; }
+  100% { opacity: 0;   transform: translateY(-115vh) scale(1.15) rotate(var(--spin, 340deg)); }
+}
+/* JS sets --spin randomly per element */
+
+/* ──────────────────────────────────────────────────────────────
+   BUTTON SHIMMER SWEEP
+   Shiny light-streak that glides across Yes & Send buttons
+────────────────────────────────────────────────────────────── */
+.yes-button::after,
+.send-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    108deg,
+    transparent 28%,
+    rgba(255,255,255,.28) 50%,
+    transparent 72%
+  );
+  background-size: 200% 100%;
+  animation: btnShimmer 2.8s linear infinite;
+  pointer-events: none;
+}
+@keyframes btnShimmer {
+  from { background-position:  200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   NOTE CARD — soft golden glow ring on hover
+────────────────────────────────────────────────────────────── */
+.note-card {
+  transition: box-shadow .35s ease, transform .35s var(--ease-spring);
+}
+.note-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 14px 44px rgba(115,64,73,.15),
+    0 0 0 1px rgba(232,184,109,.28);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   LOCATION LINE — slide-in from left (triggered when .revealed)
+────────────────────────────────────────────────────────────── */
+.date-reveal .location-line {
+  opacity: 0;
+  transform: translateX(-18px);
+  transition: opacity .65s var(--ease-out), transform .65s var(--ease-out);
+}
+.date-reveal.revealed .location-line {
+  opacity: 1;
+  transform: none;
+  transition-delay: .72s;   /* after date label */
+}
+
+/* ──────────────────────────────────────────────────────────────
+   MINI CALENDAR — fade-scale entry when revealed
+────────────────────────────────────────────────────────────── */
+.date-reveal.revealed .mini-calendar {
+  animation: calIn .7s var(--ease-spring) .44s both;
+}
+@keyframes calIn {
+  from { opacity: 0; transform: scale(.94) translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   CELEBRATION OVERLAY — subtle scale-spring on heading
+────────────────────────────────────────────────────────────── */
+.celebrate-heading {
+  animation: celebHeadIn .75s var(--ease-spring) .3s both;
+}
+@keyframes celebHeadIn {
+  from { opacity: 0; transform: scale(.7) rotate(-3deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   CLOSING — fade up
+────────────────────────────────────────────────────────────── */
+.closing h2,
+.closing .eyebrow,
+.closing-sub,
+.closing-footer {
+  animation: fadeSlideUp .8s var(--ease-out) both;
+}
+.closing .eyebrow   { animation-delay: .1s; }
+.closing h2         { animation-delay: .28s; }
+.closing-sub        { animation-delay: .46s; }
+.closing-footer     { animation-delay: .64s; }
+
+/* ──────────────────────────────────────────────────────────────
+   REDUCED MOTION OVERRIDES
+────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .yes-button::after,
+  .send-button::after { animation: none !important; }
+
+  .note-card { transition: none; }
+  .note-card:hover { transform: none; }
+
+  .date-reveal .location-line { opacity: 1; transform: none; transition: none; }
+  .date-reveal.revealed .mini-calendar { animation: none; }
+
+  .celebrate-heading { animation: none; opacity: 1; }
+  .closing h2, .closing .eyebrow,
+  .closing-sub, .closing-footer { animation: none; opacity: 1; }
+}

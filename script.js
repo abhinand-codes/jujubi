@@ -1,124 +1,352 @@
-// EDIT: replace this with the email address that should receive her reply.
-const YOUR_EMAIL = "abhinandthirteen@gmail.com";
+// ════════════════════════════════════════════════════════════════
+// JUJUBI — script.js
+// All logic: particles, hero letter split, scroll reveals,
+// typewriter, No-button dodge, Yes celebration, mini calendar,
+// and mailto sender.
+// ════════════════════════════════════════════════════════════════
+
+// ──────────────────────────────────────────────────────────────
+// EDIT: Set your email address and confirm location/date copy.
+// ──────────────────────────────────────────────────────────────
+const YOUR_EMAIL    = "YOUR_EMAIL@example.com"; // ← reply-to address
+const DATE_DISPLAY  = "September 14, 2026";     // ← shown in email body
+const DATE_LOCATION = "Dharamshala";            // ← venue (also shown in the DOM via #location-name)
+// ──────────────────────────────────────────────────────────────
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const $ = (selector) => document.querySelector(selector);
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
 
-// Reveal each section gently as it enters the page.
-const reveals = document.querySelectorAll(".reveal");
-const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
-  if (entry.isIntersecting) { entry.target.classList.add("visible"); observer.unobserve(entry.target); }
-}), { threshold: 0.18 });
-reveals.forEach((item) => observer.observe(item));
 
-// Typewriter line only starts once it is in view.
-const typeTarget = $("[data-typewriter]");
-const typeObserver = new IntersectionObserver(([entry]) => {
-  if (!entry.isIntersecting) return;
-  const fullText = typeTarget.dataset.typewriter;
-  if (reduceMotion) { typeTarget.textContent = fullText; return; }
-  typeTarget.textContent = "";
-  [...fullText].forEach((letter, index) => setTimeout(() => { typeTarget.textContent += letter; }, index * 42));
-  typeObserver.disconnect();
-}, { threshold: 0.65 });
-typeObserver.observe(typeTarget);
-
-function celebrate(amount = 36) {
+// ════════════════════════════════════════════════════════════════
+// 1. BACKGROUND PARTICLE SYSTEM
+//    Continuously drifts hearts, sparkles and dots upward.
+// ════════════════════════════════════════════════════════════════
+(function spawnBgParticles() {
   if (reduceMotion) return;
-  const layer = $("#confetti-layer");
-  const shapes = ["♥", "✦", "✧", "•"];
-  for (let i = 0; i < amount; i += 1) {
-    const piece = document.createElement("span");
-    piece.className = "confetti";
-    piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
-    piece.style.left = `${Math.random() * 100}%`;
-    piece.style.color = ["#D98A94", "#B85C68", "#E8B86D"][Math.floor(Math.random() * 3)];
-    piece.style.fontSize = `${10 + Math.random() * 15}px`;
-    piece.style.setProperty("--drift", `${-100 + Math.random() * 200}px`);
-    piece.style.animationDelay = `${Math.random() * .5}s`;
-    layer.append(piece);
-    setTimeout(() => piece.remove(), 3500);
-  }
-}
+  const layer  = $("#bg-particles");
+  const shapes = ["♥", "♡", "✦", "✧", "·", "✦"];
+  const colors = [
+    "rgba(217,138,148,.32)",
+    "rgba(184,92,104,.24)",
+    "rgba(232,184,109,.32)",
+    "rgba(245,216,152,.28)",
+  ];
 
-// The No button keeps a respectful distance from the cursor, while Yes gets harder to miss.
-const noButton = $("#no-button"), choiceArea = $("#choice-area"), message = $("#no-message"), face = $(".face"), yesButton = $("#yes-button");
-const noMessages = [
-  "wait... 🥺", "hey, that tickles!", "please don't press that", "I made you a whole calendar!",
-  "the Yes button is looking extra cute...", "my little heart is panicking", "you almost had me!", "pretty please choose Yes?",
-  "I promise it'll be lovely", "No is feeling a bit shy today", "one tiny Yes? 💛", "I believe in us!"
+  function spawnOne() {
+    const el   = document.createElement("span");
+    el.className = "bg-p";
+    const size = 8 + Math.random() * 14;
+    const dur  = 9 + Math.random() * 13;
+    el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    el.style.cssText = [
+      `left: ${Math.random() * 100}%`,
+      `bottom: -2rem`,
+      `color: ${colors[Math.floor(Math.random() * colors.length)]}`,
+      `font-size: ${size}px`,
+      `animation: bgDrift ${dur}s linear forwards`,
+    ].join(";");
+    layer.append(el);
+    el.addEventListener("animationend", () => el.remove(), { once: true });
+  }
+
+  // Staggered initial batch so the page isn't empty at load
+  for (let i = 0; i < 10; i++) setTimeout(spawnOne, i * 350);
+  // Continuous drip
+  setInterval(spawnOne, 750);
+})();
+
+
+// ════════════════════════════════════════════════════════════════
+// 2. HERO TITLE — Letter-by-letter float-in
+// ════════════════════════════════════════════════════════════════
+(function splitHeroTitle() {
+  const title    = $("#hero-title");
+  const emoji    = title.querySelector(".emoji-gold");
+  // Grab text before the emoji span
+  const rawText  = "Hey JuJuBi ";
+
+  title.innerHTML = "";          // clear current content
+
+  [...rawText].forEach((ch, i) => {
+    const span = document.createElement("span");
+    span.className = "letter";
+    span.style.animationDelay = `${0.08 + i * 0.06}s`;
+    // Preserve spaces as non-breaking so layout is correct
+    span.innerHTML = ch === " " ? "&nbsp;" : ch;
+    title.append(span);
+  });
+
+  // Re-attach emoji with its own staggered delay
+  if (emoji) {
+    emoji.classList.add("letter");
+    emoji.style.animationDelay = `${0.08 + rawText.length * 0.06}s`;
+    title.append(emoji);
+  }
+})();
+
+
+// ════════════════════════════════════════════════════════════════
+// 3. SCROLL REVEAL
+//    Sections with .reveal become .visible when they enter view.
+// ════════════════════════════════════════════════════════════════
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (e.isIntersecting) {
+      e.target.classList.add("visible");
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.14 });
+$$(".reveal").forEach((el) => revealObs.observe(el));
+
+
+// ════════════════════════════════════════════════════════════════
+// 4. TYPEWRITER
+//    Starts only once the build-up heading enters view.
+// ════════════════════════════════════════════════════════════════
+const typeTarget = $("[data-typewriter]");
+const typeObs = new IntersectionObserver(([entry]) => {
+  if (!entry.isIntersecting) return;
+  const full = typeTarget.dataset.typewriter;
+  if (reduceMotion) { typeTarget.textContent = full; return; }
+  typeTarget.textContent = "";
+  [...full].forEach((ch, i) =>
+    setTimeout(() => (typeTarget.textContent += ch), i * 42)
+  );
+  typeObs.disconnect();
+}, { threshold: 0.6 });
+typeObs.observe(typeTarget);
+
+
+// ════════════════════════════════════════════════════════════════
+// 5. NO-BUTTON DODGE
+//    Smoothly moves away from the cursor using CSS transitions.
+// ════════════════════════════════════════════════════════════════
+const noBtn      = $("#no-button");
+const yesBtn     = $("#yes-button");
+const choiceArea = $("#choice-area");
+const noMsg      = $("#no-message");
+const face       = $("#face");
+
+// Expanding list of pleading lines (cycles as attempts increase)
+const noLines = [
+  "wait... 🥺",
+  "hey, that tickles!",
+  "please don't press that",
+  "I made this whole thing for you!",
+  "the Yes button is looking lovely...",
+  "my little heart is panicking 😢",
+  "you almost had me!",
+  "pretty please choose Yes?",
+  "I promise it'll be wonderful",
+  "one tiny Yes? 💛",
+  "I believe in us!",
+  "oops, wrong button 🙈",
+  "come on... just Yes 🥹",
 ];
-let noAttempts = 0, lastDodge = 0;
+
+let noAttempts = 0;
+let tx = 0, ty = 0;          // current translate offsets for the No button
+let lastDodge = 0;
+
 function dodgeNoButton(event, force = false) {
   if (reduceMotion) return;
+
   const now = performance.now();
-  if (!force && now - lastDodge < 230) return;
+  if (!force && now - lastDodge < 220) return;   // throttle
+
   const area = choiceArea.getBoundingClientRect();
-  const button = noButton.getBoundingClientRect();
-  const pointerX = event.clientX ?? button.left + button.width / 2;
-  const pointerY = event.clientY ?? button.top + button.height / 2;
-  const distance = Math.hypot(pointerX - (button.left + button.width / 2), pointerY - (button.top + button.height / 2));
-  if (!force && distance > 105) return;
+  const btn  = noBtn.getBoundingClientRect();
+  const cx   = btn.left + btn.width  / 2;
+  const cy   = btn.top  + btn.height / 2;
+  const px   = event?.clientX ?? cx;
+  const py   = event?.clientY ?? cy;
+  const dist = Math.hypot(px - cx, py - cy);
+
+  if (!force && dist > 120) return;
+
   lastDodge = now;
-  noAttempts += 1;
-  const xDirection = pointerX < button.left + button.width / 2 ? 1 : -1;
-  const yDirection = pointerY < button.top + button.height / 2 ? 1 : -1;
-  const maxX = Math.max(44, (area.width - button.width) / 2 - 7);
-  const maxY = Math.max(16, (area.height - button.height) / 2 - 7);
-  const jitterX = 10 + Math.random() * 20;
-  const jitterY = 7 + Math.random() * 14;
-  noButton.style.transform = `translate(${xDirection * Math.min(maxX, maxX - jitterX)}px, ${yDirection * Math.min(maxY, jitterY)}px) scale(${Math.max(.55, 1 - noAttempts * .022)})`;
-  noButton.style.opacity = `${Math.max(.35, 1 - noAttempts * .035)}`;
-  yesButton.style.setProperty("--yes-scale", Math.min(2.05, 1 + noAttempts * .075));
-  message.textContent = noMessages[(noAttempts - 1) % noMessages.length];
+  noAttempts++;
+
+  // Direction vector away from pointer
+  const rawDx = cx - px || 1;
+  const rawDy = cy - py || 1;
+  const len   = Math.hypot(rawDx, rawDy) || 1;
+  const nx    = rawDx / len;
+  const ny    = rawDy / len;
+
+  // How far can the button travel within the choice-area?
+  const maxX = Math.max(40, (area.width  - btn.width)  / 2 - 8);
+  const maxY = Math.max(14, (area.height - btn.height) / 2 - 8);
+
+  tx = Math.max(-maxX, Math.min(maxX, tx + nx * (48 + Math.random() * 28)));
+  ty = Math.max(-maxY, Math.min(maxY, ty + ny * (22 + Math.random() * 16)));
+
+  const scale   = Math.max(.48, 1 - noAttempts * .026);
+  const opacity = Math.max(.28, 1 - noAttempts * .042);
+
+  // CSS transition on .no-button makes the movement silky smooth
+  noBtn.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  noBtn.style.opacity   = String(opacity);
+
+  // Grow the Yes button as the No button gets smaller
+  yesBtn.style.transform = `scale(${Math.min(1.9, 1 + noAttempts * 0.075)})`;
+
+  // Speech bubble message
+  noMsg.textContent = noLines[(noAttempts - 1) % noLines.length];
+
+  // Face expression — cycle through states
   face.classList.remove("dramatic", "melting", "excited");
-  void face.offsetWidth;
-  face.classList.add(noAttempts % 3 === 0 ? "melting" : noAttempts % 2 === 0 ? "excited" : "dramatic");
-  noButton.textContent = noAttempts > 7 ? "not today" : "No";
+  void face.offsetWidth;   // force reflow so animations restart
+  if      (noAttempts % 3 === 0) face.classList.add("melting");
+  else if (noAttempts % 2 === 0) face.classList.add("excited");
+  else                           face.classList.add("dramatic");
+
+  // Label changes after repeated attempts
+  if (noAttempts > 8)  noBtn.textContent = "not today";
+  if (noAttempts > 14) noBtn.style.fontSize = ".7rem";
 }
-choiceArea.addEventListener("pointermove", (event) => dodgeNoButton(event));
-noButton.addEventListener("pointerenter", (event) => dodgeNoButton(event, true));
-noButton.addEventListener("pointerdown", (event) => { event.preventDefault(); dodgeNoButton(event, true); });
-noButton.addEventListener("click", (event) => { event.preventDefault(); dodgeNoButton(event, true); });
 
-yesButton.addEventListener("click", () => { celebrate(48); setTimeout(() => $("#calendar-section").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 300); });
+choiceArea.addEventListener("pointermove",  (e) => dodgeNoButton(e));
+noBtn.addEventListener("pointerenter",      (e) => dodgeNoButton(e, true));
+noBtn.addEventListener("pointerdown",       (e) => { e.preventDefault(); dodgeNoButton(e, true); });
+noBtn.addEventListener("click",             (e) => { e.preventDefault(); dodgeNoButton(e, true); });
 
-// Calendar: defaults to the current month and only permits today onward.
-const grid = $("#calendar-grid"), monthLabel = $("#month-label"), selection = $("#date-selection"), confirm = $("#confirm-button");
-const today = new Date(); today.setHours(0, 0, 0, 0);
-let viewDate = new Date(today.getFullYear(), today.getMonth(), 1), selectedDate = null, confirmedDate = null;
-const dateFormat = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-function renderCalendar() {
-  grid.classList.add("changing");
-  setTimeout(() => grid.classList.remove("changing"), 250);
-  monthLabel.textContent = viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
-  grid.innerHTML = "";
-  const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
-  const days = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
-  for (let i = 0; i < firstDay; i += 1) grid.append(document.createElement("span"));
-  for (let day = 1; day <= days; day += 1) {
-    const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
-    const button = document.createElement("button"); button.type = "button"; button.className = "day"; button.textContent = day;
-    button.setAttribute("aria-label", dateFormat.format(date));
-    if (date < today) button.disabled = true;
-    if (selectedDate && date.getTime() === selectedDate.getTime()) button.classList.add("selected");
-    if (confirmedDate && date.getTime() === confirmedDate.getTime()) button.classList.add("confirmed");
-    button.addEventListener("click", () => { selectedDate = date; selection.textContent = `A lovely choice: ${dateFormat.format(date)} ♡`; confirm.disabled = false; renderCalendar(); });
-    grid.append(button);
+
+// ════════════════════════════════════════════════════════════════
+// 6. YES BUTTON — Celebration overlay then date reveal
+// ════════════════════════════════════════════════════════════════
+yesBtn.addEventListener("click", () => {
+  // Prevent double-trigger
+  yesBtn.disabled = true;
+  showCelebration();
+});
+
+function showCelebration() {
+  const overlay = $("#celebrate-overlay");
+  overlay.hidden = false;
+  burstHearts(90);   // fill screen with floating hearts
+
+  // After ~3.4 s, fade overlay out and slide to date section
+  setTimeout(() => {
+    overlay.style.transition = "opacity .7s ease";
+    overlay.style.opacity    = "0";
+    setTimeout(() => {
+      overlay.hidden = true;
+      overlay.style.cssText  = "";     // clean up inline styles
+      revealDateSection();
+    }, 720);
+  }, 3400);
+}
+
+function burstHearts(count) {
+  const container = $("#celebrate-hearts");
+  const shapes    = ["♥", "♡", "✦", "✧", "💛", "♥", "♥"];
+  const colors    = ["#D98A94","#B85C68","#E8B86D","#F5D898","#F4BDAC","#D98A94"];
+
+  for (let i = 0; i < count; i++) {
+    const el   = document.createElement("span");
+    el.className = "c-heart";
+    const spin = -180 + Math.random() * 360;
+    el.style.setProperty("--spin", `${spin}deg`);
+    el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+    el.style.cssText = [
+      `position:absolute`,
+      `left:${Math.random() * 100}%`,
+      `bottom:${-8 + Math.random() * 25}%`,
+      `color:${colors[Math.floor(Math.random() * colors.length)]}`,
+      `font-size:${14 + Math.random() * 30}px`,
+      `pointer-events:none`,
+      `animation:heartRise ${1.6 + Math.random() * 2.2}s ease-out ${Math.random() * .9}s forwards`,
+      `--spin:${spin}deg`,
+    ].join(";");
+    container.append(el);
+    el.addEventListener("animationend", () => el.remove(), { once: true });
   }
 }
-$("#prev-month").addEventListener("click", () => { const prev = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1); if (prev >= new Date(today.getFullYear(), today.getMonth(), 1)) { viewDate = prev; renderCalendar(); } });
-$("#next-month").addEventListener("click", () => { viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1); renderCalendar(); });
-confirm.addEventListener("click", () => {
-  if (!selectedDate) return;
-  confirmedDate = selectedDate; renderCalendar(); celebrate(52);
-  const chosen = dateFormat.format(selectedDate), note = $("#date-note").value.trim();
-  $("#confirmed-date").textContent = chosen;
-  $("#confirmation").hidden = false;
-  setTimeout(() => $("#confirmation").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 450);
-  const body = `JJB said yes! 💛\n\nConfirmed date: ${chosen}${note ? `\n\nHer note: ${note}` : ""}`;
-  // This opens the sender's email app. Edit YOUR_EMAIL above before sharing.
-  setTimeout(() => { window.location.href = `mailto:${YOUR_EMAIL}?subject=${encodeURIComponent("JJB said yes! 💛")}&body=${encodeURIComponent(body)}`; }, 800);
-});
-renderCalendar();
 
+function revealDateSection() {
+  const section = $("#date-reveal");
+  section.hidden = false;
+
+  // Allow one frame for the browser to render the (previously hidden) section
+  requestAnimationFrame(() => {
+    section.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+
+    // Trigger staggered content reveals after scroll starts
+    setTimeout(() => {
+      section.classList.add("revealed");
+      buildMiniCalendar();
+    }, 550);
+  });
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// 7. MINI SEPTEMBER 2026 CALENDAR
+//    Highlights day 14 with a glow badge + animated heart stamp.
+// ════════════════════════════════════════════════════════════════
+function buildMiniCalendar() {
+  const grid = $("#mini-cal-grid");
+  if (!grid || grid.children.length > 0) return;  // already built
+
+  const year        = 2026;
+  const month       = 8;   // 0-indexed: 8 = September
+  const specialDay  = 14;
+
+  // Day of week for September 1, 2026 (Tuesday = 2)
+  const firstDow    = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate(); // 30
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Blank leading cells
+  for (let i = 0; i < firstDow; i++) {
+    const blank = document.createElement("span");
+    blank.className = "mini-day";
+    grid.append(blank);
+  }
+
+  // Day cells
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell     = document.createElement("span");
+    cell.className = "mini-day";
+    cell.textContent = d;
+
+    const cellDate = new Date(year, month, d);
+    if (cellDate < today && d !== specialDay) cell.classList.add("past");
+    if (d === specialDay) cell.classList.add("special");
+
+    grid.append(cell);
+  }
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// 8. SEND BUTTON — build mailto: with date, location, note
+// ════════════════════════════════════════════════════════════════
+$("#send-button").addEventListener("click", () => {
+  const note     = $("#date-note").value.trim();
+  // Read location from DOM so any in-HTML edit is picked up automatically
+  const location = ($("#location-name")?.textContent || DATE_LOCATION).trim();
+
+  const subject  = encodeURIComponent("I'm excited for our date! 💛");
+  const bodyParts = [
+    `Date: ${DATE_DISPLAY}`,
+    `Location: ${location}`,
+    "",
+    note ? `Her note: ${note}` : "(no note added — see you there! 💛)",
+  ];
+  const body = encodeURIComponent(bodyParts.join("\n"));
+
+  window.location.href = `mailto:${YOUR_EMAIL}?subject=${subject}&body=${body}`;
+
+  // Show the closing section after a brief delay
+  setTimeout(() => {
+    const closing = $("#closing");
+    closing.hidden = false;
+    closing.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  }, 850);
+});

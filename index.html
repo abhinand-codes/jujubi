@@ -4,84 +4,222 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#FDF6F3" />
-  <title>A little something for JJB</title>
+  <meta name="description" content="A little something made just for JuJuBi 💛" />
+  <title>Something for JuJuBi 💛</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Sacramento&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="enhancements.css" />
 </head>
 <body>
+
+  <!-- ── Continuous background floating particles (JS-populated) ── -->
+  <div class="bg-particles" id="bg-particles" aria-hidden="true"></div>
+
   <main>
+
+    <!-- ═══════════════════════════════════════════════════════
+         HERO — Letter-by-letter floating entrance
+    ═══════════════════════════════════════════════════════ -->
     <section class="hero section" aria-labelledby="hero-title">
-      <div class="motifs" aria-hidden="true">
-        <span class="motif heart one">♥</span><span class="motif sparkle two">✦</span>
-        <span class="motif heart three">♥</span><span class="motif sparkle four">✧</span>
-        <span class="motif heart five">♥</span><span class="motif sparkle six">✦</span>
-      </div>
       <div class="hero-content">
-        <!-- EDIT: change JJB here if desired -->
-        <p class="eyebrow entrance entrance-1">a little note, just for you</p>
-        <h1 id="hero-title" class="entrance entrance-2">Hey JJB <span>💛</span></h1>
-        <p class="hero-copy entrance entrance-3">I made something for you...</p>
+        <p class="eyebrow hero-eyebrow">a little something, just for you</p>
+        <!--
+          JS splits this into per-letter <span class="letter"> elements
+          for the staggered float-in entrance animation.
+          EDIT: change "JuJuBi" here if you want a different nickname.
+        -->
+        <h1 id="hero-title" class="hero-title">Hey JuJuBi <span class="emoji-gold" aria-hidden="true">💛</span></h1>
+        <p class="hero-copy">I made this just for you...</p>
       </div>
-      <a class="scroll-cue entrance entrance-4" href="#message" aria-label="Scroll to the message"><span>scroll for a small surprise</span><b>⌄</b></a>
+      <a class="scroll-cue" href="#message" aria-label="Scroll down to the message">
+        <span>keep scrolling</span>
+        <b class="scroll-arrow" aria-hidden="true">↓</b>
+      </a>
     </section>
 
+
+    <!-- ═══════════════════════════════════════════════════════
+         MESSAGE — Personal note card
+    ═══════════════════════════════════════════════════════ -->
     <section id="message" class="message section reveal" aria-labelledby="message-title">
-      <div class="section-intro"><p class="eyebrow">from my heart</p><h2 id="message-title">A small confession</h2></div>
-      <article class="note-card">
+      <div class="section-intro reveal-child">
+        <p class="eyebrow">from my heart</p>
+        <h2 id="message-title">A small confession</h2>
+      </div>
+
+      <article class="note-card reveal-child" aria-label="Personal message">
         <span class="card-sparkle" aria-hidden="true">✦</span>
-        <!-- EDIT: personal message about Jeevitha goes here -->
+        <!--
+          ╔══════════════════════════════════════════════════════╗
+          ║  EDIT: Replace these three paragraphs with your     ║
+          ║  personal message to Jeevitha.                      ║
+          ╚══════════════════════════════════════════════════════╝
+        -->
         <p>There is something about you that makes the ordinary bits of a day feel a little more golden.</p>
         <p>I keep finding tiny reasons to smile when you cross my mind, and I thought you deserved to know that.</p>
         <p>So, with a little courage and a lot of hope, I made you this.</p>
+        <!-- END EDIT ──────────────────────────────────────────── -->
         <span class="signature">with a nervous little heart, me</span>
       </article>
-      <span class="heart-orbit" aria-hidden="true">♥</span>
     </section>
 
+
+    <!-- ═══════════════════════════════════════════════════════
+         LOVE LINE — Quiet, sincere highlight
+    ═══════════════════════════════════════════════════════ -->
+    <section class="loveline section reveal" aria-label="A sincere moment">
+      <div class="loveline-inner reveal-child">
+        <span class="loveline-deco" aria-hidden="true">♥</span>
+        <!--
+          EDIT: adjust this line if desired ──────────────────────
+        -->
+        <p class="loveline-text">I love you JuJubeee</p>
+        <!-- END EDIT ──────────────────────────────────────────── -->
+        <span class="loveline-emoji" aria-hidden="true">💛</span>
+        <span class="loveline-deco right" aria-hidden="true">♥</span>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         BUILD-UP — Typewriter anticipation
+    ═══════════════════════════════════════════════════════ -->
     <section class="buildup section reveal" aria-labelledby="buildup-title">
-      <p class="eyebrow">okay, deep breath</p>
-      <h2 id="buildup-title" data-typewriter="I've been wanting to ask you something...">I've been wanting to ask you something...</h2>
-      <span class="tiny-sparkles" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
+      <p class="eyebrow reveal-child">okay, deep breath</p>
+      <h2 id="buildup-title"
+          class="typewriter-target reveal-child"
+          data-typewriter="I've been wanting to ask you something...">I've been wanting to ask you something...</h2>
+      <span class="tiny-sparkles reveal-child" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
     </section>
 
+
+    <!-- ═══════════════════════════════════════════════════════
+         ASK — The big question
+    ═══════════════════════════════════════════════════════ -->
     <section id="ask" class="ask section reveal" aria-labelledby="ask-title">
       <div class="ask-glow" aria-hidden="true"></div>
       <p class="eyebrow">the big question</p>
-      <h2 id="ask-title">Will you go out with me?</h2>
+      <h2 id="ask-title" class="shimmer-text">Will you go out with me?</h2>
+
+      <!-- Pleading chibi character -->
       <div class="pleading" id="pleading" aria-live="polite">
         <div class="bubble" id="no-message">wait... 🥺</div>
-        <div class="face" aria-hidden="true"><i class="eye left"></i><i class="eye right"></i><i class="blush blush-left"></i><i class="blush blush-right"></i><i class="mouth"></i><i class="hand hand-left"></i><i class="hand hand-right"></i></div>
+        <div class="face" id="face" aria-hidden="true">
+          <i class="eye left"></i>
+          <i class="eye right"></i>
+          <i class="blush blush-left"></i>
+          <i class="blush blush-right"></i>
+          <i class="mouth"></i>
+          <i class="hand hand-left"></i>
+          <i class="hand hand-right"></i>
+        </div>
       </div>
+
       <div class="choice-area" id="choice-area">
-        <button class="yes-button" id="yes-button" type="button">Yes <span>💛</span></button>
-        <button class="no-button" id="no-button" type="button">No</button>
+        <button class="yes-button" id="yes-button" type="button">Yes <span aria-hidden="true">💛</span></button>
+        <button class="no-button"  id="no-button"  type="button">No</button>
       </div>
     </section>
 
-    <section id="calendar-section" class="calendar-section section reveal" aria-labelledby="calendar-title">
-      <div class="section-intro"><p class="eyebrow">the fun part</p><h2 id="calendar-title">When are you free?</h2><p>Pick a day that feels like a good beginning.</p></div>
-      <div class="calendar-card">
-        <div class="calendar-head"><button id="prev-month" type="button" aria-label="Previous month">←</button><h3 id="month-label"></h3><button id="next-month" type="button" aria-label="Next month">→</button></div>
-        <div class="weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-        <div class="calendar-grid" id="calendar-grid" aria-live="polite"></div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         DATE REVEAL — September 14, Dharamshala
+         Initially hidden; revealed on Yes click via JS.
+    ═══════════════════════════════════════════════════════ -->
+    <section id="date-reveal" class="date-reveal section" hidden aria-labelledby="date-title">
+      <div class="date-reveal-inner">
+
+        <p class="eyebrow dr-child">officially the best news</p>
+        <h2 id="date-title" class="dr-child">It's a date <span aria-hidden="true">💛</span></h2>
+
+        <!-- Mini September 2026 calendar — JS renders the day cells -->
+        <div class="mini-calendar dr-child"
+             role="img"
+             aria-label="September 2026 calendar with September 14 highlighted">
+          <div class="mini-cal-header">
+            <span class="mini-cal-month">September 2026</span>
+          </div>
+          <div class="mini-cal-weekdays" aria-hidden="true">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span>
+            <span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div class="mini-cal-grid" id="mini-cal-grid" aria-hidden="true"></div>
+        </div>
+
+        <!-- Date & Location -->
+        <div class="date-location-block dr-child">
+          <p class="confirmed-date-label">September 14, 2026</p>
+
+          <div class="location-line">
+            <span class="location-pin" aria-hidden="true">📍</span>
+            <!--
+              EDIT: change location name here ─────────────────────
+            -->
+            <span class="location-name" id="location-name">Dharamshala</span>
+            <!-- END EDIT ──────────────────────────────────────── -->
+          </div>
+
+          <!--
+            EDIT: adjust this romantic subline if desired ──────────
+          -->
+          <p class="location-subline">Our first date, somewhere special ✨</p>
+          <!-- END EDIT ──────────────────────────────────────────── -->
+        </div>
+
+        <!-- Optional note + send -->
+        <div class="note-section dr-child">
+          <label class="note-label" for="date-note">
+            Got ideas for our day?
+            <span class="note-optional">(optional)</span>
+          </label>
+          <textarea
+            id="date-note"
+            class="note-textarea"
+            rows="3"
+            placeholder="I can't wait to..."
+            maxlength="300"
+          ></textarea>
+          <button class="send-button" id="send-button" type="button">
+            Send your thoughts <span aria-hidden="true">💌</span>
+          </button>
+        </div>
+
       </div>
-      <div class="date-selection" id="date-selection">Choose a day above ♡</div>
-      <label class="note-field" for="date-note">Want to add a note? <span>(optional)</span><textarea id="date-note" rows="3" placeholder="I can't wait to..." maxlength="240"></textarea></label>
-      <button class="confirm-button" id="confirm-button" type="button" disabled>Mark as confirmed <span>💌</span></button>
     </section>
 
-    <section id="confirmation" class="confirmation section" hidden aria-labelledby="confirmation-title">
-      <div class="confirmation-motifs" aria-hidden="true"><span>♥</span><span>✦</span><span>♥</span><span>✧</span></div>
-      <p class="eyebrow">officially the cutest plan</p><h2 id="confirmation-title">It's a date <span>💛</span></h2>
-      <p class="confirmed-date" id="confirmed-date"></p>
-      <p>I’ll be looking forward to it more than you know.</p>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CLOSING — After she sends her note
+         Initially hidden; revealed by JS after send.
+    ═══════════════════════════════════════════════════════ -->
+    <section id="closing" class="closing section" hidden aria-labelledby="closing-title">
+      <div class="closing-motifs" aria-hidden="true">
+        <span>♥</span><span>✦</span><span>♥</span><span>✧</span><span>♥</span>
+      </div>
+      <p class="eyebrow">it's going to be perfect</p>
+      <h2 id="closing-title">See you soon <span aria-hidden="true">💛</span></h2>
+      <p class="closing-sub">September 14, Dharamshala — our first.</p>
+      <p class="closing-footer">Can't wait, JuJuBi ♡</p>
     </section>
+
   </main>
-  <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       CELEBRATION OVERLAY — Full-screen on Yes click
+  ═══════════════════════════════════════════════════════ -->
+  <div class="celebrate-overlay" id="celebrate-overlay" hidden aria-hidden="true">
+    <!-- Hearts burst container (JS-populated) -->
+    <div class="celebrate-hearts" id="celebrate-hearts"></div>
+    <div class="celebrate-message">
+      <p class="celebrate-eyebrow">she said yes!! 💛</p>
+      <h2 class="celebrate-heading">I knew it! 🎉</h2>
+      <p class="celebrate-sub">Scroll down for the best part...</p>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
-
