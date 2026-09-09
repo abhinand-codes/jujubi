@@ -226,15 +226,15 @@ function dodgeNoButton(event, force = false) {
   noBtn.style.left = `${target.x}px`;
   noBtn.style.top  = `${target.y}px`;
 
-  // Stays clearly visible and clickable-looking — it just isn't ever
-  // where the cursor is. Gentle shrink/fade only, never disappearing.
-  const scale   = Math.max(.62, 1 - noAttempts * .016);
-  const opacity = Math.max(.6,  1 - noAttempts * .018);
+  // Stays clearly visible, active-looking, and clickable at all times —
+  // just never where the cursor is. Very light shrink/fade only.
+  const scale   = Math.max(.8, 1 - noAttempts * .01);
+  const opacity = Math.max(.82, 1 - noAttempts * .01);
   noBtn.style.transform = `scale(${scale})`;
   noBtn.style.opacity   = String(opacity);
 
-  // Grow the Yes button in response
-  yesBtn.style.transform = `scale(${Math.min(1.7, 1 + noAttempts * .05)})`;
+  // Grow the Yes button's heartbeat via CSS variable (keeps it beating)
+  yesBtn.style.setProperty("--grow", Math.min(1.7, 1 + noAttempts * .05).toFixed(3));
 
   // Update speech bubble
   const idx = (noAttempts - 1) % noLines.length;
@@ -247,8 +247,6 @@ function dodgeNoButton(event, force = false) {
   if (noAttempts % 4 === 0)      setEmotion("excited");  // ironic: excited about Yes!
   else if (noAttempts % 3 === 0) setEmotion("panic");
   else                           setEmotion("sad");
-
-  if (noAttempts > 10) noBtn.textContent = "not today 🥹";
 }
 
 // Global proximity flee — starts dodging before the cursor even
@@ -290,15 +288,24 @@ function showCelebration() {
   overlay.hidden = false;
   overlay.style.display = "";
 
-  // Launch a fuller celebration: hearts rising, confetti falling,
-  // and expanding rings, staggered for a livelier build.
-  burstParticles(90);
-  launchConfettiFall(70);
+  // Big opening burst, then a continuous stream of hearts/flowers/confetti
+  // for as long as the overlay is up — always active, never a single
+  // one-off burst that runs dry.
+  burstParticles(80);
+  launchConfettiFall(60);
   launchRings();
-  setTimeout(() => burstParticles(45), 900);
-  setTimeout(() => launchRings(), 1400);
+
+  const spawnInterval = setInterval(() => {
+    burstParticles(16);
+    launchConfettiFall(10);
+  }, 420);
+
+  setTimeout(() => launchRings(), 1300);
+  setTimeout(() => launchRings(), 2700);
+  setTimeout(() => launchRings(), 4100);
 
   setTimeout(() => {
+    clearInterval(spawnInterval);
     overlay.style.transition = "opacity .7s ease";
     overlay.style.opacity    = "0";
     setTimeout(() => {
@@ -306,7 +313,7 @@ function showCelebration() {
       overlay.style.cssText = "";
       revealDateSection();
     }, 720);
-  }, 4500);
+  }, 5400);
 }
 
 // Hearts AND flower petals rising from bottom
