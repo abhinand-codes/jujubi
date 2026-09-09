@@ -176,9 +176,9 @@ function dodgeNoButton(event, force = false) {
   const nx    = rawDx / len;
   const ny    = rawDy / len;
 
-  // How far can the button travel within the choice-area?
-  const maxX = Math.max(40, (area.width  - btn.width)  / 2 - 8);
-  const maxY = Math.max(14, (area.height - btn.height) / 2 - 8);
+  // Allow generous travel — button is a flex item so it can move freely via transform
+  const maxX = Math.min(area.width * .45, 160);
+  const maxY = Math.min(area.height * 1.2, 80);
 
   tx = Math.max(-maxX, Math.min(maxX, tx + nx * (48 + Math.random() * 28)));
   ty = Math.max(-maxY, Math.min(maxY, ty + ny * (22 + Math.random() * 16)));

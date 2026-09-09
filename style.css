@@ -465,12 +465,12 @@ h2 span { font-size: .6em; vertical-align: middle; }
 /* ── Choice buttons ── */
 .choice-area {
   position: relative;
-  width: min(100%, 24rem);
-  height: 6rem;
+  width: min(100%, 26rem);
+  height: 7rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1.4rem;
 }
 
 .yes-button {
@@ -502,11 +502,10 @@ h2 span { font-size: .6em; vertical-align: middle; }
   border-radius: 999px;
   font-weight: 500;
   font-size: .95rem;
-  position: absolute;
-  /* CSS transition makes the dodge smooth instead of jumpy */
+  /* Smooth dodge via CSS transition — transform set by JS */
   transition: transform .45s var(--ease-out), opacity .4s ease, font-size .3s ease;
-  z-index: 2;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 /* ══════════════════════════════════════════════════════════════
