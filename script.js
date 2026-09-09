@@ -40,27 +40,28 @@ const $$ = (s) => document.querySelectorAll(s);
 (function spawnBgParticles() {
   if (reduceMotion) return;
   const layer  = $("#bg-particles");
-  const shapes = ["♥", "♡", "✦", "✧", "·", "✦"];
+  const shapes = ["♥", "♡", "✦", "✧", "🌸", "🌺", "🌹", "✿", "❀", "·", "✨"];
   const colors = [
-    "rgba(217,138,148,.32)", "rgba(184,92,104,.24)",
-    "rgba(232,184,109,.32)", "rgba(245,216,152,.28)",
+    "rgba(217,138,148,.38)", "rgba(184,92,104,.30)",
+    "rgba(232,184,109,.38)", "rgba(245,216,152,.35)",
+    "rgba(244,189,172,.40)", "rgba(255,183,197,.35)"
   ];
   function spawnOne() {
     const el  = document.createElement("span");
     el.className = "bg-p";
-    const dur = 9 + Math.random() * 13;
+    const dur = 8 + Math.random() * 12;
     el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
     el.style.cssText = [
-      `left:${Math.random() * 100}%`, `bottom:-2rem`,
+      `left:${Math.random() * 100}%`, `bottom:-2.5rem`,
       `color:${colors[Math.floor(Math.random() * colors.length)]}`,
-      `font-size:${8 + Math.random() * 14}px`,
+      `font-size:${9 + Math.random() * 16}px`,
       `animation:bgDrift ${dur}s linear forwards`,
     ].join(";");
     layer.append(el);
     el.addEventListener("animationend", () => el.remove(), { once: true });
   }
-  for (let i = 0; i < 10; i++) setTimeout(spawnOne, i * 350);
-  setInterval(spawnOne, 750);
+  for (let i = 0; i < 16; i++) setTimeout(spawnOne, i * 250);
+  setInterval(spawnOne, 450);
 })();
 
 
@@ -290,20 +291,19 @@ function showCelebration() {
   overlay.style.display = "";
 
   // Big opening burst, then a continuous stream of hearts/flowers/confetti
-  // for as long as the overlay is up — always active, never a single
-  // one-off burst that runs dry.
-  burstParticles(80);
-  launchConfettiFall(60);
+  // for as long as the overlay is up — lush celebration
+  burstParticles(120);
+  launchConfettiFall(80);
   launchRings();
 
   const spawnInterval = setInterval(() => {
-    burstParticles(16);
-    launchConfettiFall(10);
-  }, 420);
+    burstParticles(24);
+    launchConfettiFall(16);
+  }, 350);
 
-  setTimeout(() => launchRings(), 1300);
-  setTimeout(() => launchRings(), 2700);
-  setTimeout(() => launchRings(), 4100);
+  setTimeout(() => launchRings(), 1200);
+  setTimeout(() => launchRings(), 2400);
+  setTimeout(() => launchRings(), 3800);
 
   setTimeout(() => {
     clearInterval(spawnInterval);
@@ -314,20 +314,20 @@ function showCelebration() {
       overlay.style.cssText = "";
       revealDateSection();
     }, 720);
-  }, 5400);
+  }, 5500);
 }
 
 // Hearts AND flower petals rising from bottom
 function burstParticles(count) {
   const container = $("#celebrate-hearts");
-  const shapes = ["♥", "♡", "✦", "💛", "🌸", "🌺", "🌹", "✿", "❀", "♥", "♥"];
-  const colors  = ["#D98A94","#B85C68","#E8B86D","#F5D898","#F4BDAC","#FFB7C5","#FF87AB"];
+  const shapes = ["♥", "♡", "💕", "💛", "🌸", "🌺", "🌹", "🌷", "✿", "❀", "✨", "♥", "🌸"];
+  const colors  = ["#D98A94","#B85C68","#E8B86D","#F5D898","#F4BDAC","#FFB7C5","#FF87AB","#E85D75"];
 
   for (let i = 0; i < count; i++) {
     const el = document.createElement("span");
     el.className = "c-heart";
-    const spin = -220 + Math.random() * 440;
-    const isFlower = i % 4 === 0;   // every 4th particle is a flower emoji
+    const spin = -360 + Math.random() * 720;
+    const isFlower = i % 3 === 0;   // every 3rd particle is a flower
     el.style.setProperty("--spin", `${spin}deg`);
     el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
     el.style.cssText = [
@@ -335,9 +335,9 @@ function burstParticles(count) {
       `left:${Math.random() * 100}%`,
       `bottom:${-10 + Math.random() * 20}%`,
       `color:${colors[Math.floor(Math.random() * colors.length)]}`,
-      `font-size:${isFlower ? 22 + Math.random() * 20 : 14 + Math.random() * 28}px`,
+      `font-size:${isFlower ? 20 + Math.random() * 24 : 14 + Math.random() * 30}px`,
       `pointer-events:none`,
-      `animation:heartRise ${1.5 + Math.random() * 2.8}s ease-out ${Math.random() * 1.2}s forwards`,
+      `animation:heartRise ${1.4 + Math.random() * 2.8}s cubic-bezier(.25,.46,.45,.94) ${Math.random() * 1.0}s forwards`,
       `--spin:${spin}deg`,
     ].join(";");
     container.append(el);
@@ -345,28 +345,44 @@ function burstParticles(count) {
   }
 }
 
-// Confetti-style ribbons falling from the top, layered with the
-// rising hearts for a fuller, more festive burst.
+// Confetti-style ribbons & falling flower petals from top
 function launchConfettiFall(count) {
   const container = $("#celebrate-hearts");
-  const colors = ["#D98A94","#B85C68","#E8B86D","#F5D898","#FF87AB","#FFB7C5"];
+  const shapes = ["🌸", "🌺", "🌹", "✿", "❀", "✨", "💛", "▪", "✦"];
+  const colors = ["#D98A94","#B85C68","#E8B86D","#F5D898","#FF87AB","#FFB7C5","#F4BDAC"];
 
   for (let i = 0; i < count; i++) {
     const el = document.createElement("span");
     el.className = "c-confetti";
-    const spin = -260 + Math.random() * 520;
+    const spin = -360 + Math.random() * 720;
+    const isEmoji = i % 2 === 0;
     el.style.setProperty("--spin", `${spin}deg`);
-    el.style.cssText = [
-      `position:absolute`,
-      `left:${Math.random() * 100}%`,
-      `top:${-8 - Math.random() * 12}%`,
-      `background:${colors[Math.floor(Math.random() * colors.length)]}`,
-      `width:${5 + Math.random() * 5}px`,
-      `height:${9 + Math.random() * 8}px`,
-      `pointer-events:none`,
-      `animation:confettiFall ${2.2 + Math.random() * 2.2}s ease-in ${Math.random() * 1.4}s forwards`,
-      `--spin:${spin}deg`,
-    ].join(";");
+    if (isEmoji) {
+      el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+      el.style.cssText = [
+        `position:absolute`,
+        `left:${Math.random() * 100}%`,
+        `top:${-8 - Math.random() * 12}%`,
+        `color:${colors[Math.floor(Math.random() * colors.length)]}`,
+        `font-size:${14 + Math.random() * 18}px`,
+        `pointer-events:none`,
+        `animation:confettiFall ${2.0 + Math.random() * 2.5}s ease-in ${Math.random() * 1.2}s forwards`,
+        `--spin:${spin}deg`,
+      ].join(";");
+    } else {
+      el.style.cssText = [
+        `position:absolute`,
+        `left:${Math.random() * 100}%`,
+        `top:${-8 - Math.random() * 12}%`,
+        `background:${colors[Math.floor(Math.random() * colors.length)]}`,
+        `width:${6 + Math.random() * 6}px`,
+        `height:${10 + Math.random() * 10}px`,
+        `border-radius:2px`,
+        `pointer-events:none`,
+        `animation:confettiFall ${2.0 + Math.random() * 2.5}s ease-in ${Math.random() * 1.2}s forwards`,
+        `--spin:${spin}deg`,
+      ].join(";");
+    }
     container.append(el);
     el.addEventListener("animationend", () => el.remove(), { once: true });
   }

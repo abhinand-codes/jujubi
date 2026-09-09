@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Sacramento&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=2" />
-  <link rel="stylesheet" href="enhancements.css?v=2" />
+  <link rel="stylesheet" href="enhancements.css?v=3" />
 </head>
 <body>
 
@@ -46,20 +46,21 @@
     <section id="message" class="message section reveal" aria-labelledby="message-title">
       <div class="section-intro reveal-child">
         <p class="eyebrow">from my heart</p>
-        <h2 id="message-title">A small confession</h2>
+        <h2 id="message-title">A small confession <span class="header-flower" aria-hidden="true">🌸</span></h2>
       </div>
 
       <article class="note-card reveal-child" aria-label="Personal message">
         <span class="card-sparkle" aria-hidden="true">✦</span>
+        <span class="card-deco-heart" aria-hidden="true">♥</span>
         <!--
           ╔══════════════════════════════════════════════════════╗
           ║  EDIT: Replace these three paragraphs with your     ║
           ║  personal message to Jeevitha.                      ║
           ╚══════════════════════════════════════════════════════╝
         -->
-        <p>There is something about you that makes the ordinary bits of a day feel a little more golden.</p>
-        <p>I keep finding tiny reasons to smile when you cross my mind, and I thought you deserved to know that.</p>
-        <p>So, with a little courage and a lot of hope, I made you this.</p>
+        <p>I love all the quiet ways we match — the little quirks we share, the thoughts we catch before they're spoken, and how effortlessly natural it feels just being close to you. <span class="text-accent-heart" aria-hidden="true">♥</span></p>
+        <p>It's so much more than just fondness. Every time I think of us, I feel this genuine, bubbling excitement — a bright, joyful spark that makes me smile out of nowhere. <span class="text-accent-sparkle" aria-hidden="true">✨</span></p>
+        <p>So with a hopeful smile and a nervous little heart, I made this just for you... <span class="text-accent-flower" aria-hidden="true">🌸</span></p>
         <!-- END EDIT ──────────────────────────────────────────── -->
         <span class="signature">with a nervous little heart, me</span>
       </article>
@@ -75,7 +76,7 @@
         <!--
           EDIT: adjust this line if desired ──────────────────────
         -->
-        <p class="loveline-text">I love you JuJubeee</p>
+        <p class="loveline-text">I love you JuJubeee <span class="loveline-sparkle" aria-hidden="true">✨</span></p>
         <!-- END EDIT ──────────────────────────────────────────── -->
         <span class="loveline-emoji" aria-hidden="true">💛</span>
         <span class="loveline-deco right" aria-hidden="true">♥</span>
@@ -91,7 +92,7 @@
       <h2 id="buildup-title"
           class="typewriter-target reveal-child"
           data-typewriter="I've been wanting to ask you something...">I've been wanting to ask you something...</h2>
-      <span class="tiny-sparkles reveal-child" aria-hidden="true">✦ &nbsp; ✧ &nbsp; ✦</span>
+      <span class="tiny-sparkles reveal-child" aria-hidden="true">🌸 &nbsp; ✦ &nbsp; 🌸 &nbsp; ✧ &nbsp; 🌸</span>
     </section>
 
 
@@ -101,7 +102,7 @@
     <section id="ask" class="ask section reveal" aria-labelledby="ask-title">
       <div class="ask-glow" aria-hidden="true"></div>
       <p class="eyebrow">the big question</p>
-      <h2 id="ask-title" class="shimmer-text">Will you go out with me?</h2>
+      <h2 id="ask-title" class="shimmer-text">Will you go out with me? <span class="header-heart" aria-hidden="true">💛</span></h2>
 
       <!-- Pleading character -->
       <div class="pleading" id="pleading">
@@ -258,7 +259,7 @@
       <div class="date-reveal-inner">
 
         <p class="eyebrow dr-child">officially the best news</p>
-        <h2 id="date-title" class="dr-child">It's a date <span aria-hidden="true">💛</span></h2>
+        <h2 id="date-title" class="dr-child">It's a date <span class="header-flower" aria-hidden="true">🌸💛</span></h2>
 
         <!-- Mini September 2026 calendar — JS renders the day cells -->
         <div class="mini-calendar dr-child"
@@ -283,7 +284,7 @@
             <!--
               EDIT: change location name here ─────────────────────
             -->
-            <span class="location-name" id="location-name">Dharamshala</span>
+            <span class="location-name" id="location-name">Dharamshala <span class="header-sparkle" aria-hidden="true">✨</span></span>
             <!-- END EDIT ──────────────────────────────────────── -->
           </div>
 
@@ -294,17 +295,15 @@
           <!-- END EDIT ──────────────────────────────────────────── -->
         </div>
 
-        <!-- Optional note + send -->
+        <!-- Earnest note request -->
         <div class="note-section dr-child">
           <label class="note-label" for="date-note">
-            Got ideas for our day?
-            <span class="note-optional">(optional)</span>
+            Tell me your ideas for our day <span class="note-accent" aria-hidden="true">💭✨</span>
           </label>
           <textarea
             id="date-note"
             class="note-textarea"
             rows="3"
-            placeholder="I can't wait to..."
             maxlength="300"
           ></textarea>
           <button class="send-button" id="send-button" type="button">
@@ -352,6 +351,6 @@
        no mail client opens, no extra step for her. See the config
        block at the top of script.js to finish setup. -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>
