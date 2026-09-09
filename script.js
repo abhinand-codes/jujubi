@@ -19,9 +19,9 @@
 const YOUR_EMAIL         = "abhinandthirteen@gmail.com"; // ← where her note is delivered
 const DATE_DISPLAY       = "September 14, 2026";          // ← shown in the email
 const DATE_LOCATION      = "Dharamshala";                  // ← venue
-const EMAILJS_PUBLIC_KEY  = "YOUR_EMAILJS_PUBLIC_KEY";
-const EMAILJS_SERVICE_ID  = "YOUR_EMAILJS_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = "YOUR_EMAILJS_TEMPLATE_ID";
+const EMAILJS_PUBLIC_KEY  = "PASTE_YOUR_PUBLIC_KEY_HERE";
+const EMAILJS_SERVICE_ID  = "service_lhy1dbf";
+const EMAILJS_TEMPLATE_ID = "PASTE_YOUR_TEMPLATE_ID_HERE";
 // ──────────────────────────────────────────────────────────────
 
 if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
